@@ -7,41 +7,49 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.depogramming.ghaima.onboarding.OnBoardingScreen
+import com.depogramming.ghaima.splash.SplashScreen
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController()
             GhaimaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                GhaimaApp(navController = navController)
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun GhaimaApp(navController: NavHostController) {
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screens.SplashScreen,
+        ) {
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GhaimaTheme {
-        Greeting("Android")
+            composable<Screens.SplashScreen> {
+                SplashScreen() {screen->
+                    //the onboarding or the home
+                    navController.navigate(screen)
+                }
+            }
+            composable<Screens.OnboardingScreen> {
+                OnBoardingScreen(Modifier.padding(innerPadding))
+            }
+
+        }
     }
 }
