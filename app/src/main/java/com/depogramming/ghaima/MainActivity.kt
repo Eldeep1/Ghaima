@@ -13,9 +13,14 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.depogramming.ghaima.onboarding.welcomescreen.WelcomeScreen
-import com.depogramming.ghaima.splash.SplashScreen
+import com.depogramming.ghaima.onboarding.OnboardingScreens
+import com.depogramming.ghaima.onboarding.languagescreen.view.LanguageScreenUI
+import com.depogramming.ghaima.onboarding.locationscreen.view.LocationScreenUI
+import com.depogramming.ghaima.onboarding.unitscreen.view.UnitsScreenUI
+import com.depogramming.ghaima.onboarding.welcomescreen.WelcomeScreenUI
+import com.depogramming.ghaima.splash.SplashScreenUI
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,17 +42,42 @@ fun GhaimaApp(navController: NavHostController) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screens.WelcomeScreen,
+            startDestination = SplashScreen,
         ) {
 
-            composable<Screens.SplashScreen> {
-                SplashScreen() {screen->
-                    //the onboarding or the home
-                    navController.navigate(screen)
+            composable<SplashScreen> {
+                SplashScreenUI() { screen ->
+                    navController.navigate(screen){
+                        popUpTo<SplashScreen> {
+                            inclusive = true
+                        }
+                    }
                 }
             }
-            composable<Screens.WelcomeScreen> {
-                WelcomeScreen(Modifier.padding(innerPadding))
+            navigation<OnboardingGraph>(
+                startDestination = OnboardingScreens.WelcomeScreen
+            ) {
+                composable<OnboardingScreens.WelcomeScreen> {
+                    WelcomeScreenUI(
+                        modifier = Modifier.padding(innerPadding),
+                        onButtonClick = {
+                            screen->navController.navigate(screen){
+                            popUpTo<OnboardingScreens.WelcomeScreen> {
+                                inclusive = true
+                            }
+                        }
+                        }
+                    )
+                }
+                composable<OnboardingScreens.LanguageScreen> {
+                    LanguageScreenUI(Modifier.padding(innerPadding))
+                }
+                composable<OnboardingScreens.LocationScreen> {
+                    LocationScreenUI()
+                }
+                composable<OnboardingScreens.UnitsScreen> {
+                    UnitsScreenUI()
+                }
             }
 
         }

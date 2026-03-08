@@ -31,9 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.depogramming.ghaima.R
+import com.depogramming.ghaima.onboarding.OnboardingScreens
 
 @Composable
-fun WelcomeScreen(modifier: Modifier = Modifier) {
+fun WelcomeScreenUI(modifier: Modifier = Modifier,onButtonClick:(screen:OnboardingScreens)->Unit) {
     Box {
         Column(
             modifier = modifier
@@ -75,7 +76,9 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
         ElevatedButton(
             modifier = Modifier
                 .width(320.dp).align(Alignment.BottomCenter).padding(bottom = 64.dp)
-                .height(60.dp), onClick = {}) {
+                .height(60.dp), onClick = {
+                onButtonClick(OnboardingScreens.LanguageScreen)
+            }) {
 
             Text(
                 text = "Customize My Experience",

@@ -2,10 +2,12 @@ package com.depogramming.ghaima
 
 import kotlinx.serialization.Serializable
 
-sealed class Screens {
-    @Serializable
-    object SplashScreen : Screens()
+@Serializable
+object SplashScreen
 
-    @Serializable
-    object WelcomeScreen: Screens()
-}
+// 2. The route that represents the ENTIRE Onboarding Graph
+@Serializable
+object OnboardingGraph
+@Serializable
+object MainDashboardScreen
+

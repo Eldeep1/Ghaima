@@ -39,16 +39,16 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.Screens
+import com.depogramming.ghaima.onboarding.OnboardingScreens
 
 @Composable
-fun SplashScreen(modifier: Modifier = Modifier, onNextScreen: (screen: Screens) -> Unit) {
+fun SplashScreenUI(modifier: Modifier = Modifier, onNextScreen: (screen: OnboardingScreens) -> Unit) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash))
     val progress by animateLottieCompositionAsState(composition, iterations = 1)
     var startTextAnimation by remember { mutableStateOf(false) }
     LaunchedEffect(progress) {
         if (progress == 1f) {
-            onNextScreen(Screens.WelcomeScreen)
+            onNextScreen(OnboardingScreens.WelcomeScreen)
         }
     }
 
