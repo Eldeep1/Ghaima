@@ -48,7 +48,7 @@ fun SplashScreen(modifier: Modifier = Modifier, onNextScreen: (screen: Screens) 
     var startTextAnimation by remember { mutableStateOf(false) }
     LaunchedEffect(progress) {
         if (progress == 1f) {
-            onNextScreen(Screens.OnboardingScreen)
+            onNextScreen(Screens.WelcomeScreen)
         }
     }
 

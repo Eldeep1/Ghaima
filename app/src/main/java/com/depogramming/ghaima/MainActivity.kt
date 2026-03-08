@@ -14,7 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.depogramming.ghaima.onboarding.OnBoardingScreen
+import com.depogramming.ghaima.onboarding.welcomescreen.WelcomeScreen
 import com.depogramming.ghaima.splash.SplashScreen
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
 
@@ -37,7 +37,7 @@ fun GhaimaApp(navController: NavHostController) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screens.SplashScreen,
+            startDestination = Screens.WelcomeScreen,
         ) {
 
             composable<Screens.SplashScreen> {
@@ -46,8 +46,8 @@ fun GhaimaApp(navController: NavHostController) {
                     navController.navigate(screen)
                 }
             }
-            composable<Screens.OnboardingScreen> {
-                OnBoardingScreen(Modifier.padding(innerPadding))
+            composable<Screens.WelcomeScreen> {
+                WelcomeScreen(Modifier.padding(innerPadding))
             }
 
         }
