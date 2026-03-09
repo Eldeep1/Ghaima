@@ -67,4 +67,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.compose.material.icons.core)
 
+    implementation(libs.androidx.lifecycle.viewmodel.compose.android)
+
 }
