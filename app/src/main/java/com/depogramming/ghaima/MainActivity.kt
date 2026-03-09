@@ -46,7 +46,7 @@ fun GhaimaApp(navController: NavHostController) {
         ) {
 
             composable<SplashScreen> {
-                SplashScreenUI() { screen ->
+                SplashScreenUI { screen ->
                     navController.navigate(screen){
                         popUpTo<SplashScreen> {
                             inclusive = true
@@ -59,18 +59,21 @@ fun GhaimaApp(navController: NavHostController) {
             ) {
                 composable<OnboardingScreens.WelcomeScreen> {
                     WelcomeScreenUI(
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
                         onButtonClick = {
-                            screen->navController.navigate(screen){
-                            popUpTo<OnboardingScreens.WelcomeScreen> {
-                                inclusive = true
-                            }
-                        }
+                            screen->navController.navigate(screen)
                         }
                     )
                 }
                 composable<OnboardingScreens.LanguageScreen> {
-                    LanguageScreenUI(Modifier.padding(innerPadding))
+                    LanguageScreenUI(Modifier.padding(innerPadding), onClick = {
+                        screen ->
+                        navController.navigate(screen){
+                            popUpTo<OnboardingScreens.LanguageScreen> {
+                                inclusive = true
+                            }
+                        }
+                    })
                 }
                 composable<OnboardingScreens.LocationScreen> {
                     LocationScreenUI()

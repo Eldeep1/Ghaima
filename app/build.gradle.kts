@@ -65,5 +65,6 @@ dependencies {
 
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.material)
+    implementation(libs.androidx.compose.material.icons.core)
 
 }
