@@ -49,6 +49,7 @@ import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScr
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
+import com.depogramming.ghaima.presentation.onboarding.views.utils.ExpandingPageIndicator
 import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
 
 
@@ -122,45 +123,6 @@ fun LanguageScreenUI(
 
 }
 
-@Composable
-fun ExpandingPageIndicator(
-    totalPages: Int,
-    currentPage: Int,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        repeat(totalPages) { index ->
-            val isSelected = index == currentPage
-
-
-            val width by animateDpAsState(
-                targetValue = if (isSelected) 24.dp else 8.dp,
-                animationSpec = tween(durationMillis = 300),
-                label = "indicator_width"
-            )
-
-
-            val color by animateColorAsState(
-                targetValue = if (isSelected) Color.White else Color.White.copy(alpha = 0.4f),
-                animationSpec = tween(durationMillis = 300),
-                label = "indicator_color"
-            )
-
-
-            Box(
-                modifier = Modifier
-                    .height(8.dp)
-                    .width(width)
-                    .clip(CircleShape)
-                    .background(color)
-            )
-        }
-    }
-}
 
 @Composable
 fun LanguageListScreen(
