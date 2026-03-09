@@ -87,7 +87,7 @@ fun GhaimaApp(navController: NavHostController) {
                     )
                 }
                 composable<OnboardingScreens.LocationScreen> {
-                    LocationScreenUI()
+                    LocationScreenUI(Modifier.padding(innerPadding))
                 }
                 composable<OnboardingScreens.UnitsScreen> {
                     UnitsScreenUI()
