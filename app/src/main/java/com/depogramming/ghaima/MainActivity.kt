@@ -8,19 +8,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.depogramming.ghaima.onboarding.OnboardingScreens
-import com.depogramming.ghaima.onboarding.languagescreen.view.LanguageScreenUI
-import com.depogramming.ghaima.onboarding.locationscreen.view.LocationScreenUI
-import com.depogramming.ghaima.onboarding.unitscreen.view.UnitsScreenUI
-import com.depogramming.ghaima.onboarding.welcomescreen.WelcomeScreenUI
-import com.depogramming.ghaima.splash.SplashScreenUI
+import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
+import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
+import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
+import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
+import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view.LocationScreenUI
+import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
+import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
+import com.depogramming.ghaima.presentation.splash.SplashScreenUI
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
 
 class MainActivity : ComponentActivity() {
@@ -57,6 +62,9 @@ fun GhaimaApp(navController: NavHostController) {
             navigation<OnboardingGraph>(
                 startDestination = OnboardingScreens.WelcomeScreen
             ) {
+
+                val userSettingsRepo= UserSettingsRepoImp()
+
                 composable<OnboardingScreens.WelcomeScreen> {
                     WelcomeScreenUI(
                         modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -66,14 +74,21 @@ fun GhaimaApp(navController: NavHostController) {
                     )
                 }
                 composable<OnboardingScreens.LanguageScreen> {
+
+                    val parentEntry = remember(it) {
+                        navController.getBackStackEntry<OnboardingGraph>()
+                    }
+
+                    val sharedViewModel: OnboardingViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry,
+                        factory = OnboardingViewModelFactory(userSettingsRepo)
+                    )
                     LanguageScreenUI(Modifier.padding(innerPadding), onClick = {
                         screen ->
-                        navController.navigate(screen){
-                            popUpTo<OnboardingScreens.LanguageScreen> {
-                                inclusive = true
-                            }
-                        }
-                    })
+                        navController.navigate(screen)
+                    },
+                        viewModel =sharedViewModel
+                    )
                 }
                 composable<OnboardingScreens.LocationScreen> {
                     LocationScreenUI()
