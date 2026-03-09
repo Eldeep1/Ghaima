@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.onboarding.languagescreen.view
+package com.depogramming.ghaima.presentation.onboarding.views.languageScreen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,10 +24,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,18 +45,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.depogramming.ghaima.R
-import com.depogramming.ghaima.onboarding.OnboardingScreens
+import com.depogramming.ghaima.data.onBoarding.LanguageModel
+import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
+import androidx.compose.runtime.collectAsState
 
-data class LanguageItem(val language: String, val country: String, val image: Int)
 
 @Composable
-fun LanguageScreenUI(modifier: Modifier = Modifier,onClick: (OnboardingScreens) -> Unit) {
+fun LanguageScreenUI(
+    modifier: Modifier = Modifier,
+    onClick: (OnboardingScreens) -> Unit,
+    viewModel: OnboardingViewModel
+) {
 
-    val languages = mutableListOf<LanguageItem>(
-        LanguageItem("English", "United Kingdom", R.drawable.ukflag),
-        LanguageItem("Arabic", "Egypt", R.drawable.egflag)
-    )
+    val languages = viewModel.language.collectAsState().value
+    if (languages.isEmpty()) {
+        // Show a loading spinner while the coroutine fetches the data
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -91,33 +103,35 @@ fun LanguageScreenUI(modifier: Modifier = Modifier,onClick: (OnboardingScreens) 
             )
             Spacer(Modifier.height(42.dp))
 
-            LanguageListScreen(languages)
+            if (!languages.isEmpty()) LanguageListScreen(languages,viewModel)
         }
-
-        ExpandingPageIndicator(
-            3,
-            0
-        )
-        Spacer(Modifier.height(32.dp))
-        Box(
-            Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
-                .fillMaxWidth()
-                .height(64.dp)
-                .clickable(onClick = {
-                    onClick(OnboardingScreens.LocationScreen)
-                }),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                "Continue",
-                color = Color(0xff1E3C72),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+        if (!languages.isEmpty()) {
+            ExpandingPageIndicator(
+                3,
+                0
             )
+            Spacer(Modifier.height(32.dp))
+            Box(
+                Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White)
+                    .fillMaxWidth()
+                    .height(64.dp)
+                    .clickable(onClick = {
+                        onClick(OnboardingScreens.LocationScreen)
+                    }),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    "Continue",
+                    color = Color(0xff1E3C72),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(Modifier.height(48.dp))
+
         }
-        Spacer(Modifier.height(48.dp))
 
 
     }
@@ -166,10 +180,11 @@ fun ExpandingPageIndicator(
 
 @Composable
 fun LanguageListScreen(
-    languages: List<LanguageItem>
+    languages: List<LanguageModel>,
+    viewModel: OnboardingViewModel
 ) {
 
-    var selectedLanguage by remember { mutableStateOf<LanguageItem>(languages[0]) }
+    var selectedLanguage by remember { mutableStateOf<LanguageModel>(viewModel.selectedLanguage) }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -183,7 +198,10 @@ fun LanguageListScreen(
                 country = language.country,
                 flagResId = language.image,
                 isSelected = (language == selectedLanguage),
-                onClick = { selectedLanguage = language }
+                onClick = {
+                    viewModel.selectLanguage(language)
+                    selectedLanguage=language
+                }
             )
 
         }

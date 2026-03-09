@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.onboarding.welcomescreen
+package com.depogramming.ghaima.presentation.onboarding.views.welcomescreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
 
 @Composable
 fun WelcomeScreenUI(modifier: Modifier = Modifier,onButtonClick:(screen:OnboardingScreens)->Unit) {

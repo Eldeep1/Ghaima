@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.onboarding
+package com.depogramming.ghaima.presentation.onboarding
 import kotlinx.serialization.Serializable
 sealed class OnboardingScreens {
     @Serializable

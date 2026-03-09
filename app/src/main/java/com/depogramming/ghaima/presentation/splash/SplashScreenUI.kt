@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.splash
+package com.depogramming.ghaima.presentation.splash
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -39,7 +39,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
 
 @Composable
 fun SplashScreenUI(modifier: Modifier = Modifier, onNextScreen: (screen: OnboardingScreens) -> Unit) {
