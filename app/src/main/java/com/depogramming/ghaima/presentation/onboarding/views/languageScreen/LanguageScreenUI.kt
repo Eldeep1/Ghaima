@@ -1,8 +1,5 @@
 package com.depogramming.ghaima.presentation.onboarding.views.languageScreen
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -130,6 +127,7 @@ fun LanguageListScreen(
     viewModel: OnboardingViewModel
 ) {
 
+    //TODO get the selected language from the view model
     var selectedLanguage by remember { mutableStateOf(viewModel.selectedLanguage) }
 
     LazyColumn(

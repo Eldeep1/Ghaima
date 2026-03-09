@@ -1,7 +1,9 @@
 package com.depogramming.ghaima
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,7 +81,9 @@ fun GhaimaApp(navController: NavHostController) {
 
                     val sharedViewModel: OnboardingViewModel = viewModel(
                         viewModelStoreOwner = parentEntry,
-                        factory = OnboardingViewModelFactory(userSettingsRepo)
+                        factory = OnboardingViewModelFactory(userSettingsRepo,
+                            LocalActivity.current?.application ?: Application()
+                        )
                     )
                     LanguageScreenUI(Modifier.padding(innerPadding),
                         navController,
@@ -87,7 +91,17 @@ fun GhaimaApp(navController: NavHostController) {
                     )
                 }
                 composable<OnboardingScreens.LocationScreen> {
-                    LocationScreenUI(Modifier.padding(innerPadding))
+                    val parentEntry = remember(it) {
+                        navController.getBackStackEntry<OnboardingGraph>()
+                    }
+
+                    val sharedViewModel: OnboardingViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry,
+                        factory = OnboardingViewModelFactory(userSettingsRepo,
+                            LocalActivity.current?.application ?: Application()
+                        )
+                    )
+                    LocationScreenUI(Modifier.padding(innerPadding),sharedViewModel)
                 }
                 composable<OnboardingScreens.UnitsScreen> {
                     UnitsScreenUI()
