@@ -45,15 +45,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.depogramming.ghaima.data.onBoarding.LanguageModel
-import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.navigation.NavController
+import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
 
 
 @Composable
 fun LanguageScreenUI(
     modifier: Modifier = Modifier,
-    onClick: (OnboardingScreens) -> Unit,
+    navController: NavController,
     viewModel: OnboardingViewModel
 ) {
 
@@ -110,29 +112,12 @@ fun LanguageScreenUI(
                 0
             )
             Spacer(Modifier.height(32.dp))
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .clickable(onClick = {
-                        onClick(OnboardingScreens.LocationScreen)
-                    }),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    "Continue",
-                    color = Color(0xff1E3C72),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            NextButton(onClick={
+                navController.navigate(OnboardingScreens.LocationScreen)
+            })
             Spacer(Modifier.height(48.dp))
 
         }
-
-
     }
 
 }

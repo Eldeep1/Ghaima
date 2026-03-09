@@ -30,24 +30,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
+import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 
 @Composable
-fun WelcomeScreenUI(modifier: Modifier = Modifier,onButtonClick:(screen:OnboardingScreens)->Unit) {
-    Box {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.secondary,
-                            MaterialTheme.colorScheme.tertiary
-                        )
+fun WelcomeScreenUI(modifier: Modifier = Modifier,navController: NavController) {
+    Box (
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.tertiary
                     )
-                ),
+                )
+            ),
+    ){
+        Column(
+            modifier=Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -73,21 +77,11 @@ fun WelcomeScreenUI(modifier: Modifier = Modifier,onButtonClick:(screen:Onboardi
             )
 
         }
-        ElevatedButton(
-            modifier = Modifier
-                .width(320.dp).align(Alignment.BottomCenter).padding(bottom = 64.dp)
-                .height(60.dp), onClick = {
-                onButtonClick(OnboardingScreens.LanguageScreen)
-            }) {
-
-            Text(
-                text = "Customize My Experience",
-                fontSize = 16.sp,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xff1E3C72),
-
-                )
+        NextButton(
+            modifier=Modifier.align(Alignment.BottomCenter).padding(bottom = 48.dp) .width(320.dp),
+            text="Customize My Experience"
+        ) {
+            navController.navigate(OnboardingScreens.LanguageScreen)
         }
     }
 }

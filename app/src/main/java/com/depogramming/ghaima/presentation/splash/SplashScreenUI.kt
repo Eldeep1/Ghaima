@@ -39,7 +39,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 
 @Composable
 fun SplashScreenUI(modifier: Modifier = Modifier, onNextScreen: (screen: OnboardingScreens) -> Unit) {

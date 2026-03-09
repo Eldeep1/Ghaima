@@ -18,7 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
-import com.depogramming.ghaima.presentation.onboarding.OnboardingScreens
+import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
@@ -68,9 +68,7 @@ fun GhaimaApp(navController: NavHostController) {
                 composable<OnboardingScreens.WelcomeScreen> {
                     WelcomeScreenUI(
                         modifier = Modifier.fillMaxSize().padding(innerPadding),
-                        onButtonClick = {
-                            screen->navController.navigate(screen)
-                        }
+                        navController
                     )
                 }
                 composable<OnboardingScreens.LanguageScreen> {
@@ -83,10 +81,8 @@ fun GhaimaApp(navController: NavHostController) {
                         viewModelStoreOwner = parentEntry,
                         factory = OnboardingViewModelFactory(userSettingsRepo)
                     )
-                    LanguageScreenUI(Modifier.padding(innerPadding), onClick = {
-                        screen ->
-                        navController.navigate(screen)
-                    },
+                    LanguageScreenUI(Modifier.padding(innerPadding),
+                        navController,
                         viewModel =sharedViewModel
                     )
                 }
