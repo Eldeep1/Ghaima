@@ -12,6 +12,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Looper
 import android.provider.Settings
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -33,8 +34,8 @@ import java.util.Locale
 
 class OnboardingViewModel(
     val userSettingsRepo: UserSettingsRepo,
-    val application: Application
-): ViewModel() {
+    application: Application,
+): AndroidViewModel(application) {
 
     private val _languages= MutableStateFlow<List<LanguageModel>>(listOf())
     val language: StateFlow<List<LanguageModel>> =_languages.asStateFlow()
@@ -47,6 +48,7 @@ class OnboardingViewModel(
     private val _place = MutableStateFlow("")
     val place=_place.asStateFlow()
 
+    val application=getApplication<Application>().applicationContext
     private val locationModel:LocationModel= LocationModel(longitude = 0.0, latitude = 0.0, place = "0")
     init {
         getLanguages()
@@ -113,6 +115,7 @@ class OnboardingViewModel(
 
     fun enableLocationService() {
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         application.startActivity(intent)
     }
     @SuppressLint("MissingPermission")
