@@ -10,5 +10,10 @@ object MapSelectionScreen
 @Serializable
 object OnboardingGraph
 @Serializable
-object MainDashboardScreen
-
+object MainScreensGraph
+sealed class MainScreens {
+    @Serializable object Home : MainScreens()
+    @Serializable object SavedLocations : MainScreens()
+    @Serializable object Alarms : MainScreens()
+    @Serializable object Settings : MainScreens()
+}

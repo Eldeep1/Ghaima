@@ -61,19 +61,31 @@ fun GhaimaApp(navController: NavHostController) {
     val settingsDataSource = UserSettingsLocalDataSource(settingsDao)
     val userSettingsRepo = UserSettingsRepoImp(settingsDataSource)
 
-
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val showBottomBar = currentDestination?.hierarchy?.any { destination ->
+        destination.hasRoute(MainScreens.Home::class) ||
+                destination.hasRoute(MainScreens.Alarms::class) ||
+                destination.hasRoute(MainScreens.SavedLocations::class) ||
+                destination.hasRoute(MainScreens.Settings::class)
+    } == true
 
     Scaffold(modifier = Modifier.fillMaxSize(),
-
+        bottomBar = {
+            if (showBottomBar) {
+                // will be built later
+//                MyBottomNavigationBar(navController, currentDestination)
+            }
+        }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = MapSelectionScreen,
+            startDestination = SplashScreen,
         ) {
 
             composable<SplashScreen> {
                 val parentEntry = remember(it) {
-                    navController.getBackStackEntry<OnboardingGraph>()
+                    navController.getBackStackEntry<SplashScreen>()
                 }
                 val viewModel: SplashScreenViewModel=viewModel(
                     viewModelStoreOwner = parentEntry,
@@ -82,7 +94,7 @@ fun GhaimaApp(navController: NavHostController) {
                 SplashScreenUI(
                     modifier = Modifier.padding(innerPadding),
                     onHomeScreen = {
-
+                        navController.navigate(MainScreens.Home)
                     },
                     onOnBoardingScreen = {
                         navController.navigate(OnboardingScreens.WelcomeScreen)
@@ -152,6 +164,15 @@ fun GhaimaApp(navController: NavHostController) {
             }
             composable<MapSelectionScreen> {
                 MapSelectionScreenUI(modifier = Modifier.padding(innerPadding))
+            }
+
+            navigation<MainScreensGraph>(
+                startDestination = MainScreens.Home
+            ) {
+                composable<MainScreens.Home> {
+                    // Pass the innerPadding here so the BottomBar doesn't cover your Weather data!
+                    HomeScreenUI(modifier = Modifier.padding(innerPadding))
+                }
             }
 
 
