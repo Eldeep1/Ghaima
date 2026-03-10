@@ -25,6 +25,7 @@ import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewM
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view.LocationScreenUI
+import com.depogramming.ghaima.presentation.onboarding.views.mapselection.MapSelectionScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.splash.SplashScreenUI
@@ -49,7 +50,7 @@ fun GhaimaApp(navController: NavHostController) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = SplashScreen,
+            startDestination = MapSelectionScreen,
         ) {
 
             composable<SplashScreen> {
@@ -101,12 +102,27 @@ fun GhaimaApp(navController: NavHostController) {
                             LocalActivity.current?.application ?: Application()
                         )
                     )
-                    LocationScreenUI(Modifier.padding(innerPadding),sharedViewModel)
+                    LocationScreenUI(
+                        Modifier.padding(innerPadding),
+                        sharedViewModel,
+                        onNextButtonClick = {
+                            navController.navigate(OnboardingScreens.UnitsScreen)
+                        },
+                        onMapSelectionButtonClick= {
+                            navController.navigate(
+                                MapSelectionScreen
+                            )
+                        },
+                    )
                 }
                 composable<OnboardingScreens.UnitsScreen> {
                     UnitsScreenUI()
                 }
             }
+            composable <MapSelectionScreen>{
+                MapSelectionScreenUI(modifier=Modifier.padding(innerPadding))
+            }
+
 
         }
     }
