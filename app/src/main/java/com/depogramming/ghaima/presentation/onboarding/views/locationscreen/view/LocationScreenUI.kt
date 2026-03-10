@@ -43,7 +43,12 @@ import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewM
 
 
 @Composable
-fun LocationScreenUI(modifier: Modifier = Modifier,viewModel: OnboardingViewModel) {
+fun LocationScreenUI(
+    modifier: Modifier = Modifier,
+    viewModel: OnboardingViewModel,
+    onNextButtonClick:()->Unit,
+    onMapSelectionButtonClick:()->Unit,
+    ) {
 
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
@@ -114,7 +119,7 @@ fun LocationScreenUI(modifier: Modifier = Modifier,viewModel: OnboardingViewMode
             LocationSelectionCard(
 
             ){
-
+                onMapSelectionButtonClick()
             }
 
             SelectedLocationColumn(viewModel)
@@ -128,6 +133,8 @@ fun LocationScreenUI(modifier: Modifier = Modifier,viewModel: OnboardingViewMode
         Spacer(Modifier.height(32.dp))
         NextButton(onClick={
 
+            //TODO: do some shits on the view model then decide to navigate or not
+            onNextButtonClick()
         })
         Spacer(Modifier.height(48.dp))
     }
