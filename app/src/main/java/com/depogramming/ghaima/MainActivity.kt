@@ -10,16 +10,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.depogramming.ghaima.data.db.AppDatabase
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
+import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
+import com.depogramming.ghaima.presentation.home.HomeScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
@@ -28,7 +36,9 @@ import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view
 import com.depogramming.ghaima.presentation.onboarding.views.mapselection.MapSelectionScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
-import com.depogramming.ghaima.presentation.splash.SplashScreenUI
+import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
+import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModel
+import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModelFactory
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
 
 class MainActivity : ComponentActivity() {
@@ -47,30 +57,48 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GhaimaApp(navController: NavHostController) {
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    val settingsDao = AppDatabase.getInstance(LocalContext.current).userSettingsDao()
+    val settingsDataSource = UserSettingsLocalDataSource(settingsDao)
+    val userSettingsRepo = UserSettingsRepoImp(settingsDataSource)
+
+
+
+    Scaffold(modifier = Modifier.fillMaxSize(),
+
+    ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = MapSelectionScreen,
         ) {
 
             composable<SplashScreen> {
-                SplashScreenUI { screen ->
-                    navController.navigate(screen){
-                        popUpTo<SplashScreen> {
-                            inclusive = true
-                        }
-                    }
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry<OnboardingGraph>()
                 }
+                val viewModel: SplashScreenViewModel=viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = SplashScreenViewModelFactory(userSettingsRepo)
+                    )
+                SplashScreenUI(
+                    modifier = Modifier.padding(innerPadding),
+                    onHomeScreen = {
+
+                    },
+                    onOnBoardingScreen = {
+                        navController.navigate(OnboardingScreens.WelcomeScreen)
+                    },
+                    viewModel = viewModel,
+                )
             }
             navigation<OnboardingGraph>(
                 startDestination = OnboardingScreens.WelcomeScreen
             ) {
 
-                val userSettingsRepo= UserSettingsRepoImp()
-
                 composable<OnboardingScreens.WelcomeScreen> {
                     WelcomeScreenUI(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
                         navController
                     )
                 }
@@ -82,13 +110,15 @@ fun GhaimaApp(navController: NavHostController) {
 
                     val sharedViewModel: OnboardingViewModel = viewModel(
                         viewModelStoreOwner = parentEntry,
-                        factory = OnboardingViewModelFactory(userSettingsRepo,
+                        factory = OnboardingViewModelFactory(
+                            userSettingsRepo,
                             LocalActivity.current?.application ?: Application()
                         )
                     )
-                    LanguageScreenUI(Modifier.padding(innerPadding),
+                    LanguageScreenUI(
+                        Modifier.padding(innerPadding),
                         navController,
-                        viewModel =sharedViewModel
+                        viewModel = sharedViewModel
                     )
                 }
                 composable<OnboardingScreens.LocationScreen> {
@@ -98,7 +128,8 @@ fun GhaimaApp(navController: NavHostController) {
 
                     val sharedViewModel: OnboardingViewModel = viewModel(
                         viewModelStoreOwner = parentEntry,
-                        factory = OnboardingViewModelFactory(userSettingsRepo,
+                        factory = OnboardingViewModelFactory(
+                            userSettingsRepo,
                             LocalActivity.current?.application ?: Application()
                         )
                     )
@@ -108,7 +139,7 @@ fun GhaimaApp(navController: NavHostController) {
                         onNextButtonClick = {
                             navController.navigate(OnboardingScreens.UnitsScreen)
                         },
-                        onMapSelectionButtonClick= {
+                        onMapSelectionButtonClick = {
                             navController.navigate(
                                 MapSelectionScreen
                             )
@@ -119,8 +150,8 @@ fun GhaimaApp(navController: NavHostController) {
                     UnitsScreenUI()
                 }
             }
-            composable <MapSelectionScreen>{
-                MapSelectionScreenUI(modifier=Modifier.padding(innerPadding))
+            composable<MapSelectionScreen> {
+                MapSelectionScreenUI(modifier = Modifier.padding(innerPadding))
             }
 
 

@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.presentation.splash
+package com.depogramming.ghaima.presentation.splash.view
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -34,21 +34,35 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
+import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModel
+import com.depogramming.ghaima.presentation.splash.viewModel.SplashState
 
 @Composable
-fun SplashScreenUI(modifier: Modifier = Modifier, onNextScreen: (screen: OnboardingScreens) -> Unit) {
+fun SplashScreenUI(modifier: Modifier = Modifier,onHomeScreen:()->Unit, onOnBoardingScreen: () -> Unit, viewModel: SplashScreenViewModel) {
+
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash))
     val progress by animateLottieCompositionAsState(composition, iterations = 1)
     var startTextAnimation by remember { mutableStateOf(false) }
-    LaunchedEffect(progress) {
-        if (progress == 1f) {
-            onNextScreen(OnboardingScreens.WelcomeScreen)
+
+    val splashState by viewModel.splashState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(progress, splashState) {
+
+        val isAnimationFinished = progress == 1f
+        val isDatabaseFinished = splashState !is SplashState.Loading
+
+        if (isAnimationFinished && isDatabaseFinished) {
+            when (splashState) {
+                is SplashState.GoToOnboarding -> onOnBoardingScreen()
+                is SplashState.GoToHome -> onHomeScreen()
+                else -> {}
+            }
         }
     }
 
