@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.presentation.onboarding.views.mapselection
+package com.depogramming.ghaima.presentation.onboarding.mapselection.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,10 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -22,7 +20,6 @@ import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarDefaults.InputField
 import androidx.compose.material3.Text
@@ -39,14 +36,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
+import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapSelectionScreenUI(modifier: Modifier = Modifier) {
+fun MapSelectionScreenUI(modifier: Modifier = Modifier, viewModel: MapSelectionViewModel) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -61,7 +59,7 @@ fun MapSelectionScreenUI(modifier: Modifier = Modifier) {
             )
     ) {
         CustomAppBar()
-        CustomSearchBar()
+        CustomSearchBar(viewModel)
         CustomMapPreview()
         SelectLocationButton()
     }
@@ -97,18 +95,22 @@ fun CustomAppBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomSearchBar() {
-    var searchQuery by rememberSaveable { mutableStateOf("") }
+fun CustomSearchBar(viewModel: MapSelectionViewModel) {
     var isSearchExpanded by rememberSaveable { mutableStateOf(false) }
+
+    val currentText by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val resultsList by viewModel.searchResults.collectAsStateWithLifecycle()
 
     DockedSearchBar(
         inputField = {
             InputField(
-                query = searchQuery,
-                onQueryChange = { searchQuery = it },
+                query = currentText,
+                onQueryChange = { newText ->
+                    viewModel.onSearchQueryChanged(newText)
+                    isSearchExpanded = newText.isNotBlank()
+                },
                 onSearch = {
                     isSearchExpanded = false
-                    println("Searching for: $searchQuery")
                 },
                 expanded = isSearchExpanded,
                 onExpandedChange = { isSearchExpanded = it },
@@ -130,7 +132,7 @@ fun CustomSearchBar() {
                     unfocusedContainerColor = Color.Transparent,
                     disabledContainerColor = Color.Transparent,
                     focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White.copy(alpha=.8f)
+                    unfocusedTextColor = Color.White.copy(alpha = .8f)
                 )
 
             )
@@ -142,7 +144,7 @@ fun CustomSearchBar() {
         ),
 
         expanded = isSearchExpanded,
-        onExpandedChange = { isSearchExpanded = it },
+        onExpandedChange = { },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp)
@@ -154,47 +156,33 @@ fun CustomSearchBar() {
                 .heightIn(max = 200.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            val mockCities = listOf("Cairo", "Alexandria", "Giza", "Luxor", "Aswan","Ghaza")
 
-            items(mockCities) { city ->
-                if(searchQuery.isEmpty()){
-                    Text(
-                        text = city,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
+            items(resultsList) { city ->
+                val displayText = "${city.name}, ${city.state}, ${city.country}"
+                Text(
+                    text = displayText,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
 
-                                searchQuery = city
-                                isSearchExpanded = false
-                            }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        color = Color.White
-                    )
-                }
-                else if(city.lowercase().contains(searchQuery.lowercase())){
-                    Text(
-                        text = city,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-
-                                searchQuery = city
-                                isSearchExpanded = false
-                            }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        color = Color.White
-                    )
-                }
-
+                            viewModel.onSearchQueryChanged(displayText)
+                        }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    color = Color.White
+                )
             }
+
         }
     }
 }
 
+
 @Composable
 fun CustomMapPreview() {
     Column(
-        modifier=Modifier.fillMaxSize().background(Color.Cyan)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Cyan)
     ) { }
 }
 

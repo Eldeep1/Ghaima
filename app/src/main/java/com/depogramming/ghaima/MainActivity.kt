@@ -25,15 +25,20 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.depogramming.ghaima.data.db.AppDatabase
+import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListRemoteDataSource
+import com.depogramming.ghaima.data.network.Network
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
+import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
 import com.depogramming.ghaima.presentation.home.HomeScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view.LocationScreenUI
-import com.depogramming.ghaima.presentation.onboarding.views.mapselection.MapSelectionScreenUI
+import com.depogramming.ghaima.presentation.onboarding.mapselection.view.MapSelectionScreenUI
+import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModel
+import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
@@ -60,6 +65,10 @@ fun GhaimaApp(navController: NavHostController) {
     val settingsDao = AppDatabase.getInstance(LocalContext.current).userSettingsDao()
     val settingsDataSource = UserSettingsLocalDataSource(settingsDao)
     val userSettingsRepo = UserSettingsRepoImp(settingsDataSource)
+
+    val countriesListService= Network.countriesListService
+    val countriesListRemoteDataSource= CountriesListRemoteDataSource(countriesListService)
+    val weatherRepository= WeatherRepositoryImpl(countriesListRemoteDataSource)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -163,7 +172,18 @@ fun GhaimaApp(navController: NavHostController) {
                 }
             }
             composable<MapSelectionScreen> {
-                MapSelectionScreenUI(modifier = Modifier.padding(innerPadding))
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry<MapSelectionScreen>()
+                }
+                //create the view model
+                val mapSelectionViewModel: MapSelectionViewModel = viewModel(
+                    viewModelStoreOwner = parentEntry,
+                    factory = MapSelectionViewModelFactory(
+                        userSettingsRepo,
+                        weatherRepository
+                    )
+                )
+                MapSelectionScreenUI(modifier = Modifier.padding(innerPadding),mapSelectionViewModel)
             }
 
             navigation<MainScreensGraph>(
