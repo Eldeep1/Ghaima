@@ -6,6 +6,7 @@ import android.app.Application
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
@@ -19,18 +20,27 @@ import androidx.lifecycle.viewModelScope
 import com.depogramming.ghaima.data.onBoarding.LanguageModel
 import com.depogramming.ghaima.data.onBoarding.LocationModel
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
+import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.util.Locale
+import kotlin.coroutines.resume
 
 class OnboardingViewModel(
     val userSettingsRepo: UserSettingsRepo,
@@ -45,11 +55,19 @@ class OnboardingViewModel(
     private val _askForPermission = MutableSharedFlow<Unit>()
     val askForPermission = _askForPermission.asSharedFlow()
     var enabledLocationSettings: Boolean?=null
-    private val _place = MutableStateFlow("")
-    val place=_place.asStateFlow()
+    var place: StateFlow<String> = userSettingsRepo.getUserData()
+        .map { settings ->
+            settings?.location?.place ?: ""
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ""
+        )
+
 
     val application=getApplication<Application>().applicationContext
-    private val locationModel:LocationModel= LocationModel(longitude = 0.0, latitude = 0.0, place = "0")
+    private var locationModel:LocationModel= LocationModel(longitude = 0.0, latitude = 0.0, place = "0")
     init {
         getLanguages()
     }
@@ -156,32 +174,54 @@ class OnboardingViewModel(
     }
 
     fun getAddressFromLocation(location: Location) {
-        val geocoder = Geocoder(application, Locale.getDefault())
+        viewModelScope.launch {
+            val geocoder = Geocoder(application, Locale.getDefault())
+            val lat = location.latitude
+            val lon = location.longitude
+            val addressName = try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    suspendCancellableCoroutine { continuation ->
+                        geocoder.getFromLocation(lat, lon, 1) { addresses ->
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            geocoder.getFromLocation(location.latitude, location.longitude, 1) { addresses ->
-                if (addresses.isNotEmpty()) {
-                    val subAdmin = addresses[0].subAdminArea
-                    val admin=addresses[0].adminArea
-                    val country=addresses[0].countryName
-
-                    locationModel.place = "$subAdmin \n $admin, $country"
+                            continuation.resume(formatAddress(addresses, lat, lon))
+                        }
+                    }
+                } else {
+                    withContext(Dispatchers.IO) {
+                        @Suppress("DEPRECATION")
+                        val addresses = geocoder.getFromLocation(lat, lon, 1)
+                        formatAddress(addresses, lat, lon)
+                    }
                 }
+            } catch (e: Exception) {
+                "$lat, $lon"
             }
-        }
-        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-        if (!addresses.isNullOrEmpty()) {
-            val subAdmin = addresses[0].subAdminArea
-            val admin=addresses[0].adminArea
-            val country=addresses[0].countryName
+            locationModel = locationModel.copy(
+                latitude = lat,
+                longitude = lon,
+                place = addressName
+            )
 
-            locationModel.place = "$subAdmin \n $admin, $country"
-        } else {
-            locationModel.place = "${locationModel.longitude} ${locationModel.latitude} "
+            val currentSettings = userSettingsRepo.getUserData().firstOrNull()
+                ?: UserSettingsModel(null, null, null)
+            val updatedSettings = currentSettings.copy(
+                location = locationModel
+            )
+            userSettingsRepo.setUserSettings(updatedSettings)
         }
-        _place.value=locationModel.place
     }
 
+    // (Keep the same formatAddress helper function from earlier so your text is clean!)
+    private fun formatAddress(addresses: List<Address>?, lat: Double, lon: Double): String {
+        if (addresses.isNullOrEmpty()) return "$lat, $lon"
+        val address = addresses[0]
+        val validParts = listOfNotNull(
+            address.subAdminArea,
+            address.adminArea,
+            address.countryName
+        ).distinct()
+        return if (validParts.isNotEmpty()) validParts.joinToString(", ") else "$lat, $lon"
+    }
 
 }
 
