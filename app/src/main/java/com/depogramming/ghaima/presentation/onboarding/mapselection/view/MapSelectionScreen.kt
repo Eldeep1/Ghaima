@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,6 +56,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,9 +78,13 @@ fun MapSelectionScreenUI(modifier: Modifier = Modifier, viewModel: MapSelectionV
         CustomSearchBar(viewModel)
         CustomMapPreview(Modifier.weight(1f),viewModel)
         Spacer(Modifier.height(16.dp))
+        val scope = rememberCoroutineScope()
+
         SelectLocationButton(onButtonClick = {
-            viewModel.onSubmitButtonClick()
-            onBackClick()
+            scope.launch {
+                viewModel.onSubmitButtonClick()
+                onBackClick()
+            }
         })
         Spacer(Modifier.height(40.dp))
     }

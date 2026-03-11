@@ -5,6 +5,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Build
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -84,8 +85,7 @@ class MapSelectionViewModel(
         )
     }
 
-    fun onSubmitButtonClick() {
-        viewModelScope.launch {
+    suspend fun onSubmitButtonClick() {
             val currentSettings = userSettingsRepository.getUserData().firstOrNull()
                 ?: UserSettingsModel(null, null, null)
 
@@ -98,7 +98,6 @@ class MapSelectionViewModel(
             )
 
             userSettingsRepository.setUserSettings(newSettings)
-        }
     }
 
     fun updateLocationFromMap(lat: Double, lng: Double) {
