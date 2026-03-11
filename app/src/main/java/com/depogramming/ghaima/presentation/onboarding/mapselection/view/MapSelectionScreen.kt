@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -26,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +44,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModel
+import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
+
+
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,8 +70,10 @@ fun MapSelectionScreenUI(modifier: Modifier = Modifier, viewModel: MapSelectionV
     ) {
         CustomAppBar()
         CustomSearchBar(viewModel)
-        CustomMapPreview()
+        CustomMapPreview(Modifier.weight(1f))
+        Spacer(Modifier.height(16.dp))
         SelectLocationButton()
+        Spacer(Modifier.height(40.dp))
     }
 
 }
@@ -176,17 +188,36 @@ fun CustomSearchBar(viewModel: MapSelectionViewModel) {
     }
 }
 
-
 @Composable
-fun CustomMapPreview() {
+fun CustomMapPreview(modifier:Modifier=Modifier) {
+
+    val startingLocation = LatLng(30.0444, 31.2357)
+
+    var selectedLocation by remember { mutableStateOf(startingLocation) }
+    val markerState = remember { MarkerState(position = startingLocation) }
+    markerState.position = selectedLocation
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Cyan)
-    ) { }
+        modifier = modifier
+    ) {
+        GoogleMap(
+            onMapClick = { tappedLatLng ->
+                selectedLocation = tappedLatLng
+                println("we have clicked on the mappppp")
+                println(tappedLatLng.latitude)
+            }
+        ) {
+            Marker(
+                state = markerState,
+                title = "Selected Location",
+                snippet = "Welcome to Egypt!"
+            )
+        }
+    }
 }
-
 @Composable
-fun SelectLocationButton() {
+fun SelectLocationButton(modifier:Modifier=Modifier) {
+    NextButton(modifier=modifier.padding(horizontal = 24.dp)) {
 
+    }
 }

@@ -32,6 +32,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         val apiKey = properties.getProperty("OPEN_WEATHER_API_KEY") ?: ""
         buildConfigField("String", "OPEN_WEATHER_API_KEY", "\"$apiKey\"")
+
+        val mapsApiKey = properties.getProperty("MAPS_API_KEY") ?: ""
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
 
     buildTypes {
@@ -90,6 +93,9 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
+
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
 
     ksp(libs.dagger.compiler)
 

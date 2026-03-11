@@ -14,9 +14,11 @@ kotlin = "2.3.10"
 composeBom = "2026.02.01"
 lifecycleViewmodelComposeAndroid = "2.10.0"
 lottieCompose = "6.7.1"
+mapsCompose = "8.2.0"
 material = "1.13.0"
 navigationCompose = "2.9.7"
 playServicesLocation = "21.3.0"
+playServicesMaps = "20.0.0"
 retrofit = "3.0.0"
 roomCompiler = "2.8.4"
 roomKtx = "2.8.4"
@@ -50,8 +52,10 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
