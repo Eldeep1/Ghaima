@@ -180,10 +180,13 @@ fun GhaimaApp(navController: NavHostController) {
                     viewModelStoreOwner = parentEntry,
                     factory = MapSelectionViewModelFactory(
                         userSettingsRepo,
-                        weatherRepository
+                        weatherRepository,
+                        LocalActivity.current?.application ?: Application()
                     )
                 )
-                MapSelectionScreenUI(modifier = Modifier.padding(innerPadding),mapSelectionViewModel)
+                MapSelectionScreenUI(modifier = Modifier.padding(innerPadding),mapSelectionViewModel, onBackClick = {
+                    navController.popBackStack()
+                })
             }
 
             navigation<MainScreensGraph>(

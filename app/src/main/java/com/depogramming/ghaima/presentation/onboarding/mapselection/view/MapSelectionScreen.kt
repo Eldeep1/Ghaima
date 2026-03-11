@@ -26,6 +26,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarDefaults.InputField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,16 +46,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModel
 import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
 
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapSelectionScreenUI(modifier: Modifier = Modifier, viewModel: MapSelectionViewModel) {
+fun MapSelectionScreenUI(modifier: Modifier = Modifier, viewModel: MapSelectionViewModel,onBackClick:()->Unit) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -68,18 +72,21 @@ fun MapSelectionScreenUI(modifier: Modifier = Modifier, viewModel: MapSelectionV
                 )
             )
     ) {
-        CustomAppBar()
+        CustomAppBar(onBackClick)
         CustomSearchBar(viewModel)
-        CustomMapPreview(Modifier.weight(1f))
+        CustomMapPreview(Modifier.weight(1f),viewModel)
         Spacer(Modifier.height(16.dp))
-        SelectLocationButton()
+        SelectLocationButton(onButtonClick = {
+            viewModel.onSubmitButtonClick()
+            onBackClick()
+        })
         Spacer(Modifier.height(40.dp))
     }
 
 }
 
 @Composable
-fun CustomAppBar() {
+fun CustomAppBar(onBackClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -91,7 +98,9 @@ fun CustomAppBar() {
         Image(
             painter = painterResource(R.drawable.backbutton),
             contentDescription = "back button",
-            modifier = Modifier.clickable(enabled = true, onClick = {})
+            modifier = Modifier.clickable(enabled = true, onClick = {
+                onBackClick()
+            })
         )
         Text(
             modifier = Modifier.fillMaxWidth(),
@@ -156,7 +165,7 @@ fun CustomSearchBar(viewModel: MapSelectionViewModel) {
         ),
 
         expanded = isSearchExpanded,
-        onExpandedChange = { },
+        onExpandedChange = {isSearchExpanded = it },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp)
@@ -176,8 +185,9 @@ fun CustomSearchBar(viewModel: MapSelectionViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-
                             viewModel.onSearchQueryChanged(displayText)
+                            isSearchExpanded = false
+                            viewModel.onCitySelected(city)
                         }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     color = Color.White
@@ -189,22 +199,37 @@ fun CustomSearchBar(viewModel: MapSelectionViewModel) {
 }
 
 @Composable
-fun CustomMapPreview(modifier:Modifier=Modifier) {
+fun CustomMapPreview(modifier:Modifier=Modifier,viewModel: MapSelectionViewModel) {
+    val currentLocation by viewModel.selectedLocation.collectAsStateWithLifecycle()
+    val mapLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
 
-    val startingLocation = LatLng(30.0444, 31.2357)
+    val markerState = remember { MarkerState(position = mapLatLng) }
+    markerState.position = mapLatLng
 
-    var selectedLocation by remember { mutableStateOf(startingLocation) }
-    val markerState = remember { MarkerState(position = startingLocation) }
-    markerState.position = selectedLocation
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(mapLatLng, 7f)
+    }
+
+    LaunchedEffect(key1 = mapLatLng) {
+        cameraPositionState.animate(
+            update = CameraUpdateFactory.newLatLngZoom(
+                mapLatLng,
+                12f
+            ),
+            durationMs = 1000
+        )
+    }
 
     Column(
         modifier = modifier
     ) {
         GoogleMap(
+            cameraPositionState = cameraPositionState,
             onMapClick = { tappedLatLng ->
-                selectedLocation = tappedLatLng
-                println("we have clicked on the mappppp")
-                println(tappedLatLng.latitude)
+                viewModel.updateLocationFromMap(
+                    lat = tappedLatLng.latitude,
+                    lng = tappedLatLng.longitude
+                )
             }
         ) {
             Marker(
@@ -216,8 +241,8 @@ fun CustomMapPreview(modifier:Modifier=Modifier) {
     }
 }
 @Composable
-fun SelectLocationButton(modifier:Modifier=Modifier) {
+fun SelectLocationButton(modifier:Modifier=Modifier,onButtonClick:()->Unit) {
     NextButton(modifier=modifier.padding(horizontal = 24.dp)) {
-
+        onButtonClick()
     }
 }
