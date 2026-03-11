@@ -45,7 +45,9 @@ import com.depogramming.ghaima.data.onBoarding.LanguageModel
 import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.views.utils.ExpandingPageIndicator
 import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
 
@@ -86,7 +88,7 @@ fun LanguageScreenUI(
         Column(modifier = Modifier.weight(1f)) {
             Spacer(Modifier.height(96.dp))
             Text(
-                text = "Choose Your Language",
+                text = stringResource(R.string.choose_your_language),
                 textAlign = TextAlign.Center,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
@@ -94,7 +96,7 @@ fun LanguageScreenUI(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Select Your Preferred Language for the best weather experience",
+                text = stringResource(R.string.select_your_preferred_language_for_the_best_weather_experience),
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 color = Color.White.copy(alpha = .7f),

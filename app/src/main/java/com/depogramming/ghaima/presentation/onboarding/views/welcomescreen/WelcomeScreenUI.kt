@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,7 +67,7 @@ fun WelcomeScreenUI(modifier: Modifier = Modifier,navController: NavController) 
             }
             Spacer(Modifier.height(48.dp))
             Text(
-                text = "Ghaima watches the skies, so you don’t have to.",
+                text = stringResource(R.string.ghaima_watches_the_skies_so_you_don_t_have_to),
                 fontSize = 24.sp,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.SemiBold,
@@ -78,8 +78,11 @@ fun WelcomeScreenUI(modifier: Modifier = Modifier,navController: NavController) 
 
         }
         NextButton(
-            modifier=Modifier.align(Alignment.BottomCenter).padding(bottom = 48.dp) .width(320.dp),
-            text="Customize My Experience"
+            modifier=Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 48.dp)
+                .width(320.dp),
+            text= stringResource(R.string.customize_my_experience)
         ) {
             navController.navigate(OnboardingScreens.LanguageScreen)
         }

@@ -20,14 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.depogramming.ghaima.R
 
 @Composable
 fun NextButton(
     modifier: Modifier=Modifier,
-    text:String="Continue",onClick:()->Unit){
+    text:String= stringResource(R.string.continue_btn), onClick:()->Unit){
     Box(
         modifier
             .clip(RoundedCornerShape(16.dp))

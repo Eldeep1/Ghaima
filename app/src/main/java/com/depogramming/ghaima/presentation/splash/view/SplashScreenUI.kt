@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -84,7 +85,8 @@ fun SplashScreenUI(modifier: Modifier = Modifier,onHomeScreen:()->Unit, onOnBoar
                     0.0f to MaterialTheme.colorScheme.primary,
                     (animateStage.value * 0.5f) to MaterialTheme.colorScheme.secondary,
                     animateStage.value to MaterialTheme.colorScheme.tertiary
-                ))
+                )
+            )
     ) {
         if (composition == null) {
             Image(
@@ -118,7 +120,7 @@ fun HomeTitles(showLabels: Boolean) {
             enter = fadeIn(animationSpec = tween(1000,delayMillis = 200)) + expandVertically()
         ) {
             Text(
-                text = "GHAIMA",
+                text = stringResource(R.string.ghaima),
                 fontSize = 42.sp,
                 color = Color.White,
                 fontFamily = FontFamily.Monospace,
@@ -132,7 +134,7 @@ fun HomeTitles(showLabels: Boolean) {
                     slideInVertically(initialOffsetY = { it / 2 })
         ) {
             Text(
-                text = "Hear The Clouds",
+                text = stringResource(R.string.hear_the_clouds),
                 fontSize = 18.sp,
                 color = Color.White.copy(alpha = 0.8f),
                 fontFamily = FontFamily.Monospace

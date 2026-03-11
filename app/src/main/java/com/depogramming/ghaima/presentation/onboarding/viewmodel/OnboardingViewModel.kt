@@ -13,6 +13,8 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Looper
 import android.provider.Settings
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -81,8 +83,25 @@ class OnboardingViewModel(
         }
     }
     fun selectLanguage(languageModel: LanguageModel){
-        //TODO call the room or shared shit and store the selection there
         selectedLanguage=languageModel
+        val languageCode = languageModel.languageCode
+
+        val localeList = LocaleListCompat.forLanguageTags(languageCode)
+        AppCompatDelegate.setApplicationLocales(localeList)
+
+        println("aaaaaaaaaaaaaaaaaaa")
+        println(languageCode)
+        println("interesting")
+        viewModelScope.launch {
+            val currentSettings = userSettingsRepo.getUserData().firstOrNull()
+                ?: UserSettingsModel(null, null, null)
+
+            val updatedSettings = currentSettings.copy(
+                languageCode = languageModel.languageCode
+            )
+            userSettingsRepo.setUserSettings(updatedSettings)
+        }
+
     }
 
     fun onLocationPermissionResult(fineLocationGranted: Boolean, coarseLocationGranted: Boolean){

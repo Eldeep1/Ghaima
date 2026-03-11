@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">غَيْمَة</string>
+    <string name="choose_your_language">قم بإختيار اللغة</string>
+    <string name="set_your_location">قم بإختيار الموقع</string>
+    <string name="get_accurate_local_weather_forecasts_and_real_time_updates">احصل على توقعات دقيقة للطقس المحلي وتحديثات لحظية.</string>
+    <string name="use_my_current_location">استخدام موقعي الحالي</string>
+    <string name="customize_my_experience">ضبط الإعدادات</string>
+    <string name="continue_btn">متابعة</string>
+    <string name="select_location_on_map">تحديد الموقع على الخريطة</string>
+    <string name="ghaima">غَيْمَة</string>
+    <string name="hear_the_clouds">متتبع السحب</string>
+    <string name="ghaima_watches_the_skies_so_you_don_t_have_to">غيمة تراقب السماء نيابةً عنك.</string>
+    <string name="select_your_preferred_language_for_the_best_weather_experience">اختر لغتك المفضلة للحصول على أفضل تجربة للطقس.</string>
+    <string name="search_for_a_city">ابحث عن مدينة…</string>
+    <string name="selected_location">الموقع المختار</string>
+</resources>

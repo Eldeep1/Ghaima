@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
@@ -94,7 +95,7 @@ fun LocationScreenUI(
         Column(modifier=Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.height(96.dp))
             Text(
-                text = "Set Your Location",
+                text = stringResource(R.string.set_your_location),
                 textAlign = TextAlign.Center,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
@@ -102,7 +103,7 @@ fun LocationScreenUI(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Get accurate local weather forecasts and real-time updates.",
+                text = stringResource(R.string.get_accurate_local_weather_forecasts_and_real_time_updates),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color.White.copy(alpha = .7f)
@@ -110,7 +111,7 @@ fun LocationScreenUI(
             Spacer(Modifier.height(32.dp))
 
             NextButton(
-                text = "Use My Current Location"
+                text = stringResource(R.string.use_my_current_location)
             ) {
                 viewModel.requestUserLocation(true)
             }
@@ -149,7 +150,7 @@ fun SelectedLocationColumn(viewModel: OnboardingViewModel){
         ){
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "Selected Location",
+                text = stringResource(R.string.selected_location),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color.White.copy(alpha = .6f)
@@ -220,7 +221,7 @@ fun LocationSelectionCard(
             }
 
             Text(
-                text = "Select Location on Map",
+                text = stringResource(R.string.select_location_on_map),
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
