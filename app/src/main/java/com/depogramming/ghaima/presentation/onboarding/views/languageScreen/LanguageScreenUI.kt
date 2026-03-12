@@ -55,7 +55,7 @@ import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
 @Composable
 fun LanguageScreenUI(
     modifier: Modifier = Modifier,
-    navController: NavController,
+    onNextButtonClick:()->Unit,
     viewModel: OnboardingViewModel
 ) {
 
@@ -113,7 +113,7 @@ fun LanguageScreenUI(
             )
             Spacer(Modifier.height(32.dp))
             NextButton(onClick={
-                navController.navigate(OnboardingScreens.LocationScreen)
+                viewModel.finishLanguageSelection(onNextButtonClick)
             })
             Spacer(Modifier.height(48.dp))
 

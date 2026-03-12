@@ -123,6 +123,18 @@ class OnboardingViewModel(
         }
     }
 
+    fun finishLanguageSelection(onNextClick:()->Unit){
+        viewModelScope.launch {
+            val currentSettings = userSettingsRepo.getUserData().firstOrNull()
+                ?: UserSettingsModel(null, null, null, null)
+
+            val updatedSettings = currentSettings.copy(
+                languageCode = selectedLanguage.languageCode
+            )
+            userSettingsRepo.setUserSettings(updatedSettings)
+            onNextClick()
+        }
+    }
     fun selectLanguage(languageModel: LanguageModel) {
         selectedLanguage = languageModel
         val languageCode = languageModel.languageCode
@@ -130,7 +142,6 @@ class OnboardingViewModel(
         val localeList = LocaleListCompat.forLanguageTags(languageCode)
         AppCompatDelegate.setApplicationLocales(localeList)
 
-        println("interesting")
         viewModelScope.launch {
             val currentSettings = userSettingsRepo.getUserData().firstOrNull()
                 ?: UserSettingsModel(null, null, null, null)

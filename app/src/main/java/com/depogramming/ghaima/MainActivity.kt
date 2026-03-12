@@ -138,7 +138,9 @@ fun GhaimaApp(navController: NavHostController) {
                     )
                     LanguageScreenUI(
                         Modifier.padding(innerPadding),
-                        navController,
+                        onNextButtonClick = {
+                            navController.navigate(OnboardingScreens.LocationScreen)
+                        },
                         viewModel = sharedViewModel
                     )
                 }
