@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.data.onBoarding
+package com.depogramming.ghaima.data.weather.model
 
 data class LocationModel(
     var latitude: Double,

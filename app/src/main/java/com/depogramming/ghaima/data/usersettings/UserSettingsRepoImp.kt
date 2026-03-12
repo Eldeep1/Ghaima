@@ -1,7 +1,7 @@
 package com.depogramming.ghaima.data.usersettings
 
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.data.onBoarding.LanguageModel
+import com.depogramming.ghaima.data.weather.model.LanguageModel
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
 import com.depogramming.ghaima.data.utils.toEntity

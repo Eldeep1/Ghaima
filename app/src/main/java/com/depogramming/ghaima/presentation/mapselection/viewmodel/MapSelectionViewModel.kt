@@ -1,16 +1,14 @@
-package com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel
+package com.depogramming.ghaima.presentation.mapselection.viewmodel
 
 import android.app.Application
 import android.location.Address
 import android.location.Geocoder
-import android.location.Location
 import android.os.Build
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListNetworkResponse
-import com.depogramming.ghaima.data.onBoarding.LocationModel
+import com.depogramming.ghaima.data.weather.model.LocationModel
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
@@ -87,7 +85,7 @@ class MapSelectionViewModel(
 
     suspend fun onSubmitButtonClick() {
             val currentSettings = userSettingsRepository.getUserData().firstOrNull()
-                ?: UserSettingsModel(null, null, null)
+                ?: UserSettingsModel(null, null, null,null)
 
             val newSettings = currentSettings.copy(
                 location = LocationModel(

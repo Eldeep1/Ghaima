@@ -1,6 +1,6 @@
 package com.depogramming.ghaima.data.usersettings
 
-import com.depogramming.ghaima.data.onBoarding.LanguageModel
+import com.depogramming.ghaima.data.weather.model.LanguageModel
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
 import kotlinx.coroutines.flow.Flow
 

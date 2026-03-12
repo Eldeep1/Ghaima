@@ -7,6 +7,7 @@ fun UserSettingsEntity.toModel(): UserSettingsModel {
     return UserSettingsModel(
         languageCode = this.languageCode,
         units = this.units,
+        windSpeedUnit = this.windSpeedUnit,
         location = this.location
     )
 }
@@ -15,6 +16,7 @@ fun UserSettingsModel.toEntity(): UserSettingsEntity {
     return UserSettingsEntity(
         languageCode = this.languageCode,
         units = this.units,
-        location = this.location
+        location = this.location,
+        windSpeedUnit = this.windSpeedUnit
     )
 }

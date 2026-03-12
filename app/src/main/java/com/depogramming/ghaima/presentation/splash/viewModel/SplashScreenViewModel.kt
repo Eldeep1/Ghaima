@@ -12,7 +12,7 @@ class SplashScreenViewModel(
     val userSettingsRepo: UserSettingsRepo
 ) : ViewModel() {
 
-    // Start in the Loading state so the Splash logo stays on screen
+
     private val _splashState = MutableStateFlow<SplashState>(SplashState.Loading)
     val splashState = _splashState.asStateFlow()
 

@@ -7,7 +7,7 @@ import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsDa
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsEntity
 
 
-@Database(entities = [UserSettingsEntity::class], version = 1,exportSchema = false)
+@Database(entities = [UserSettingsEntity::class], version = 2,exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userSettingsDao(): UserSettingsDao
 

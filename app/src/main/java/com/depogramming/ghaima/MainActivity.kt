@@ -2,7 +2,6 @@ package com.depogramming.ghaima
 
 import android.app.Application
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -37,9 +36,9 @@ import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewM
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view.LocationScreenUI
-import com.depogramming.ghaima.presentation.onboarding.mapselection.view.MapSelectionScreenUI
-import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModel
-import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModelFactory
+import com.depogramming.ghaima.presentation.mapselection.view.MapSelectionScreenUI
+import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModel
+import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
@@ -169,7 +168,25 @@ fun GhaimaApp(navController: NavHostController) {
                     )
                 }
                 composable<OnboardingScreens.UnitsScreen> {
-                    UnitsScreenUI()
+                    val parentEntry = remember(it) {
+                        navController.getBackStackEntry<OnboardingGraph>()
+                    }
+
+                    val sharedViewModel: OnboardingViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry,
+                        factory = OnboardingViewModelFactory(
+                            userSettingsRepo,
+                            LocalActivity.current?.application ?: Application()
+                        )
+                    )
+                    UnitsScreenUI(viewModel = sharedViewModel){
+                        navController.navigate(MainScreens.Home) {
+                            popUpTo<OnboardingGraph> {
+                                inclusive = true
+                            }
+
+                        }
+                    }
                 }
             }
             composable<MapSelectionScreen> {

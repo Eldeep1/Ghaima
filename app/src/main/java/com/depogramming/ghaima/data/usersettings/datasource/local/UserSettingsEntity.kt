@@ -3,7 +3,7 @@ package com.depogramming.ghaima.data.usersettings.datasource.local
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.depogramming.ghaima.data.onBoarding.LocationModel
+import com.depogramming.ghaima.data.weather.model.LocationModel
 
 @Entity(tableName = "settings")
 data class UserSettingsEntity (
@@ -12,5 +12,6 @@ data class UserSettingsEntity (
     val languageCode: String?,
     val units: String?,
     @Embedded
-    val location: LocationModel?
+    val location: LocationModel?,
+    val windSpeedUnit: String?,
 )

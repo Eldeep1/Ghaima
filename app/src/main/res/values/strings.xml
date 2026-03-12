@@ -13,4 +13,14 @@
     <string name="select_your_preferred_language_for_the_best_weather_experience">Select Your Preferred Language for the best weather experience</string>
     <string name="search_for_a_city">Search for a city…</string>
     <string name="selected_location">Selected Location</string>
+    <string name="choose_your_units">Choose Your Units</string>
+    <string name="customize_how_you_view_weather_data">Customize how you view weather data</string>
+    <string name="celsius_c">Celsius (°C)</string>
+    <string name="fahrenheit_f">Fahrenheit (°F)</string>
+    <string name="kelvin_k">Kelvin (K)</string>
+    <string name="temperature">Temperature</string>
+    <string name="wind_speed_title">WIND SPEED</string>
+    <string name="meter_per_second">Meter per second (m/s)</string>
+    <string name="miles_per_hour">Miles per hour (mph)</string>
+    <string name="start_exploring_ghaima">Start Exploring Ghaima</string>
 </resources>

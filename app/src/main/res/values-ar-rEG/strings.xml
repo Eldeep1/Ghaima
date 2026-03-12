@@ -14,4 +14,14 @@
     <string name="select_your_preferred_language_for_the_best_weather_experience">اختر لغتك المفضلة للحصول على أفضل تجربة للطقس.</string>
     <string name="search_for_a_city">ابحث عن مدينة…</string>
     <string name="selected_location">الموقع المختار</string>
+    <string name="choose_your_units">اختر وحدات القياس</string>
+    <string name="customize_how_you_view_weather_data">اختر طريقة عرض بيانات الطقس</string>
+    <string name="celsius_c">مئوية (°C)</string>
+    <string name="fahrenheit_f">فهرنهايت (°F)</string>
+    <string name="kelvin_k">كلفن (K)</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="wind_speed_title">سرعة الرياح</string>
+    <string name="meter_per_second">متر في الثانية (m/s)</string>
+    <string name="miles_per_hour">ميل في الساعة (mph)</string>
+    <string name="start_exploring_ghaima">ابدأ باستكشاف غَيْمَة</string>
 </resources>

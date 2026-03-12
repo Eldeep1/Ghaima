@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.presentation.onboarding.mapselection.view
+package com.depogramming.ghaima.presentation.mapselection.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.presentation.onboarding.mapselection.viewmodel.MapSelectionViewModel
+import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModel
 import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
