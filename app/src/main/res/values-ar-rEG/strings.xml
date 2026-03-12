@@ -24,4 +24,8 @@
     <string name="meter_per_second">متر في الثانية (m/s)</string>
     <string name="miles_per_hour">ميل في الساعة (mph)</string>
     <string name="start_exploring_ghaima">ابدأ باستكشاف غَيْمَة</string>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_saved">المحفوظات</string>
+    <string name="nav_alarms">التنبيهات</string>
+    <string name="nav_settings">الإعدادات</string>
 </resources>

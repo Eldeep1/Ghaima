@@ -23,4 +23,8 @@
     <string name="meter_per_second">Meter per second (m/s)</string>
     <string name="miles_per_hour">Miles per hour (mph)</string>
     <string name="start_exploring_ghaima">Start Exploring Ghaima</string>
+    <string name="nav_home">HOME</string>
+    <string name="nav_saved">SAVED</string>
+    <string name="nav_alarms">ALARMS</string>
+    <string name="nav_settings">SETTINGS</string>
 </resources>
