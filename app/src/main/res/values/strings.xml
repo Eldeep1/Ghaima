@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">Ghaima</string>
+    <string name="choose_your_language">Choose Your Language</string>
+    <string name="set_your_location">Set Your Location</string>
+    <string name="get_accurate_local_weather_forecasts_and_real_time_updates">Get accurate local weather forecasts and real-time updates.</string>
+    <string name="use_my_current_location">Use My Current Location</string>
+    <string name="customize_my_experience">Customize My Experience</string>
+    <string name="continue_btn">Continue</string>
+    <string name="select_location_on_map">Select Location on Map</string>
+    <string name="ghaima">GHAIMA</string>
+    <string name="hear_the_clouds">Hear The Clouds</string>
+    <string name="ghaima_watches_the_skies_so_you_don_t_have_to">Ghaima watches the skies, so you don’t have to.</string>
+    <string name="select_your_preferred_language_for_the_best_weather_experience">Select Your Preferred Language for the best weather experience</string>
+    <string name="search_for_a_city">Search for a city…</string>
+    <string name="selected_location">Selected Location</string>
+    <string name="choose_your_units">Choose Your Units</string>
+    <string name="customize_how_you_view_weather_data">Customize how you view weather data</string>
+    <string name="celsius_c">Celsius (°C)</string>
+    <string name="fahrenheit_f">Fahrenheit (°F)</string>
+    <string name="kelvin_k">Kelvin (K)</string>
+    <string name="temperature">Temperature</string>
+    <string name="wind_speed_title">WIND SPEED</string>
+    <string name="meter_per_second">Meter per second (m/s)</string>
+    <string name="miles_per_hour">Miles per hour (mph)</string>
+    <string name="start_exploring_ghaima">Start Exploring Ghaima</string>
 </resources>
