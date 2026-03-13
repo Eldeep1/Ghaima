@@ -56,9 +56,10 @@ fun MyBottomNavigationBar(
                 selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo<MainScreens.Home> {
                             saveState = true
                         }
+
                         launchSingleTop = true
                         restoreState = true
                     }

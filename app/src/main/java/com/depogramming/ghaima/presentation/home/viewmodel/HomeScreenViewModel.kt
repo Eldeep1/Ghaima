@@ -26,6 +26,7 @@ class HomeScreenViewModel(
 
     init {
 
+        println("we are calling that again")
         observeSettings()
     }
 
@@ -68,6 +69,10 @@ class HomeScreenViewModel(
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        println("did it really cleared??????")
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
