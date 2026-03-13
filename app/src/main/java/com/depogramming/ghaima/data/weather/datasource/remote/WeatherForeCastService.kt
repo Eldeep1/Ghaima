@@ -10,7 +10,7 @@ interface WeatherForeCastService {
     suspend fun getWeatherForeCast(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
-        @Query("lange") language: String,
+        @Query("lang") language: String,
         @Query("units") units:String
     ) : Response<WeatherForeCastDTO>
 }
