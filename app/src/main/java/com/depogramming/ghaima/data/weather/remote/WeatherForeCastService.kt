@@ -1,0 +1,17 @@
+package com.depogramming.ghaima.data.weather.remote
+
+import com.depogramming.ghaima.data.weather.model.WeatherForeCastDTO
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+
+interface WeatherForeCastService {
+    @GET("data/2.5/forecast?")
+    suspend fun getWeatherForeCast(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("lange") language: String,
+        @Query("units") units:String
+    ) : Response<WeatherForeCastDTO>
+}
