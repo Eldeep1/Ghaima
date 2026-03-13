@@ -6,13 +6,18 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,7 +35,12 @@ import com.depogramming.ghaima.data.network.Network
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
-import com.depogramming.ghaima.presentation.home.HomeScreenUI
+import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
+import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSource
+import com.depogramming.ghaima.presentation.alarms.view.AlarmsUI
+import com.depogramming.ghaima.presentation.home.view.HomeScreenUI
+import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModel
+import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
@@ -41,9 +51,12 @@ import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionV
 import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
+import com.depogramming.ghaima.presentation.savedlocations.view.SavedLocationsUI
+import com.depogramming.ghaima.presentation.settings.view.SettingsUI
 import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModel
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModelFactory
+import com.depogramming.ghaima.presentation.utils.MyBottomNavigationBar
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
 
 class MainActivity : AppCompatActivity() {
@@ -66,9 +79,13 @@ fun GhaimaApp(navController: NavHostController) {
     val settingsDataSource = UserSettingsLocalDataSource(settingsDao)
     val userSettingsRepo = UserSettingsRepoImp(settingsDataSource)
 
-    val countriesListService= Network.countriesListService
-    val countriesListRemoteDataSource= CountriesListRemoteDataSource(countriesListService)
-    val weatherRepository= WeatherRepositoryImpl(countriesListRemoteDataSource)
+    val countriesListService = Network.countriesListService
+    val countriesListRemoteDataSource = CountriesListRemoteDataSource(countriesListService)
+
+    val weatherForeCastService= Network.weatherForeCastService
+    val weatherRemoteDataSource= WeatherRemoteDataSource(weatherForeCastService)
+    val weatherLocalDataSource= WeatherLocalDataSource(AppDatabase.getInstance(LocalContext.current).weatherForecastDao())
+    val weatherRepository = WeatherRepositoryImpl(countriesListRemoteDataSource,weatherRemoteDataSource,weatherLocalDataSource)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -79,146 +96,179 @@ fun GhaimaApp(navController: NavHostController) {
                 destination.hasRoute(MainScreens.Settings::class)
     } == true
 
-    Scaffold(modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            if (showBottomBar) {
-                // will be built later
-//                MyBottomNavigationBar(navController, currentDestination)
-            }
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = SplashScreen,
-        ) {
-
-            composable<SplashScreen> {
-                val parentEntry = remember(it) {
-                    navController.getBackStackEntry<SplashScreen>()
-                }
-                val viewModel: SplashScreenViewModel=viewModel(
-                    viewModelStoreOwner = parentEntry,
-                    factory = SplashScreenViewModelFactory(userSettingsRepo)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.colorScheme.tertiary
                     )
-                SplashScreenUI(
-                    modifier = Modifier.padding(innerPadding),
-                    onHomeScreen = {
-                        navController.navigate(MainScreens.Home)
-                    },
-                    onOnBoardingScreen = {
-                        navController.navigate(OnboardingScreens.WelcomeScreen)
-                    },
-                    viewModel = viewModel,
                 )
+            ),
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            bottomBar = {
+                if (showBottomBar) {
+                    MyBottomNavigationBar(navController, currentDestination)
+                }
             }
-            navigation<OnboardingGraph>(
-                startDestination = OnboardingScreens.WelcomeScreen
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = SplashScreen,
             ) {
 
-                composable<OnboardingScreens.WelcomeScreen> {
-                    WelcomeScreenUI(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
-                        navController
+                composable<SplashScreen> {
+                    val parentEntry = remember(it) {
+                        navController.getBackStackEntry<SplashScreen>()
+                    }
+                    val viewModel: SplashScreenViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry,
+                        factory = SplashScreenViewModelFactory(userSettingsRepo)
+                    )
+                    SplashScreenUI(
+                        modifier = Modifier.padding(innerPadding),
+                        onHomeScreen = {
+                            navController.navigate(MainScreens.Home)
+                        },
+                        onOnBoardingScreen = {
+                            navController.navigate(OnboardingScreens.WelcomeScreen)
+                        },
+                        viewModel = viewModel,
                     )
                 }
-                composable<OnboardingScreens.LanguageScreen> {
+                navigation<OnboardingGraph>(
+                    startDestination = OnboardingScreens.WelcomeScreen
+                ) {
 
-                    val parentEntry = remember(it) {
-                        navController.getBackStackEntry<OnboardingGraph>()
-                    }
-
-                    val sharedViewModel: OnboardingViewModel = viewModel(
-                        viewModelStoreOwner = parentEntry,
-                        factory = OnboardingViewModelFactory(
-                            userSettingsRepo,
-                            LocalActivity.current?.application ?: Application()
+                    composable<OnboardingScreens.WelcomeScreen> {
+                        WelcomeScreenUI(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            navController
                         )
-                    )
-                    LanguageScreenUI(
-                        Modifier.padding(innerPadding),
-                        onNextButtonClick = {
-                            navController.navigate(OnboardingScreens.LocationScreen)
-                        },
-                        viewModel = sharedViewModel
-                    )
-                }
-                composable<OnboardingScreens.LocationScreen> {
-                    val parentEntry = remember(it) {
-                        navController.getBackStackEntry<OnboardingGraph>()
                     }
+                    composable<OnboardingScreens.LanguageScreen> {
 
-                    val sharedViewModel: OnboardingViewModel = viewModel(
-                        viewModelStoreOwner = parentEntry,
-                        factory = OnboardingViewModelFactory(
-                            userSettingsRepo,
-                            LocalActivity.current?.application ?: Application()
-                        )
-                    )
-                    LocationScreenUI(
-                        Modifier.padding(innerPadding),
-                        sharedViewModel,
-                        onNextButtonClick = {
-                            navController.navigate(OnboardingScreens.UnitsScreen)
-                        },
-                        onMapSelectionButtonClick = {
-                            navController.navigate(
-                                MapSelectionScreen
+                        val parentEntry = remember(it) {
+                            navController.getBackStackEntry<OnboardingGraph>()
+                        }
+
+                        val sharedViewModel: OnboardingViewModel = viewModel(
+                            viewModelStoreOwner = parentEntry,
+                            factory = OnboardingViewModelFactory(
+                                userSettingsRepo,
+                                LocalActivity.current?.application ?: Application()
                             )
-                        },
-                    )
-                }
-                composable<OnboardingScreens.UnitsScreen> {
-                    val parentEntry = remember(it) {
-                        navController.getBackStackEntry<OnboardingGraph>()
-                    }
-
-                    val sharedViewModel: OnboardingViewModel = viewModel(
-                        viewModelStoreOwner = parentEntry,
-                        factory = OnboardingViewModelFactory(
-                            userSettingsRepo,
-                            LocalActivity.current?.application ?: Application()
                         )
-                    )
-                    UnitsScreenUI(viewModel = sharedViewModel){
-                        navController.navigate(MainScreens.Home) {
-                            popUpTo<OnboardingGraph> {
-                                inclusive = true
-                            }
+                        LanguageScreenUI(
+                            Modifier.padding(innerPadding),
+                            onNextButtonClick = {
+                                navController.navigate(OnboardingScreens.LocationScreen)
+                            },
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable<OnboardingScreens.LocationScreen> {
+                        val parentEntry = remember(it) {
+                            navController.getBackStackEntry<OnboardingGraph>()
+                        }
 
+                        val sharedViewModel: OnboardingViewModel = viewModel(
+                            viewModelStoreOwner = parentEntry,
+                            factory = OnboardingViewModelFactory(
+                                userSettingsRepo,
+                                LocalActivity.current?.application ?: Application()
+                            )
+                        )
+                        LocationScreenUI(
+                            Modifier.padding(innerPadding),
+                            sharedViewModel,
+                            onNextButtonClick = {
+                                navController.navigate(OnboardingScreens.UnitsScreen)
+                            },
+                            onMapSelectionButtonClick = {
+                                navController.navigate(
+                                    MapSelectionScreen
+                                )
+                            },
+                        )
+                    }
+                    composable<OnboardingScreens.UnitsScreen> {
+                        val parentEntry = remember(it) {
+                            navController.getBackStackEntry<OnboardingGraph>()
+                        }
+
+                        val sharedViewModel: OnboardingViewModel = viewModel(
+                            viewModelStoreOwner = parentEntry,
+                            factory = OnboardingViewModelFactory(
+                                userSettingsRepo,
+                                LocalActivity.current?.application ?: Application()
+                            )
+                        )
+                        UnitsScreenUI(viewModel = sharedViewModel) {
+                            navController.navigate(MainScreens.Home) {
+                                popUpTo<OnboardingGraph> {
+                                    inclusive = true
+                                }
+
+                            }
                         }
                     }
                 }
-            }
-            composable<MapSelectionScreen> {
-                val parentEntry = remember(it) {
-                    navController.getBackStackEntry<MapSelectionScreen>()
-                }
-                //create the view model
-                val mapSelectionViewModel: MapSelectionViewModel = viewModel(
-                    viewModelStoreOwner = parentEntry,
-                    factory = MapSelectionViewModelFactory(
-                        userSettingsRepo,
-                        weatherRepository,
-                        LocalActivity.current?.application ?: Application()
+                composable<MapSelectionScreen> {
+                    val parentEntry = remember(it) {
+                        navController.getBackStackEntry<MapSelectionScreen>()
+                    }
+                    //create the view model
+                    val mapSelectionViewModel: MapSelectionViewModel = viewModel(
+                        viewModelStoreOwner = parentEntry,
+                        factory = MapSelectionViewModelFactory(
+                            userSettingsRepo,
+                            weatherRepository,
+                            LocalActivity.current?.application ?: Application()
+                        )
                     )
-                )
-                MapSelectionScreenUI(modifier = Modifier.padding(innerPadding),mapSelectionViewModel, onBackClick = {
-                    navController.popBackStack()
-                })
-            }
-
-            navigation<MainScreensGraph>(
-                startDestination = MainScreens.Home
-            ) {
-                composable<MainScreens.Home> {
-                    // Pass the innerPadding here so the BottomBar doesn't cover your Weather data!
-                    HomeScreenUI(modifier = Modifier.padding(innerPadding))
+                    MapSelectionScreenUI(
+                        modifier = Modifier.padding(innerPadding),
+                        mapSelectionViewModel,
+                        onBackClick = {
+                            navController.popBackStack()
+                        })
                 }
+
+                navigation<MainScreensGraph>(
+                    startDestination = MainScreens.Home
+                ) {
+                    composable<MainScreens.Home> {
+                        val homeScreenViewModel: HomeScreenViewModel = viewModel(
+                            factory = HomeScreenViewModelFactory(
+                                weatherRepository,
+                                userSettingsRepo,
+                            )
+                        )
+                        HomeScreenUI(modifier = Modifier.padding(innerPadding),homeScreenViewModel)
+                    }
+                    composable<MainScreens.SavedLocations> {
+                        SavedLocationsUI(modifier = Modifier.padding(innerPadding))
+                    }
+                    composable<MainScreens.Alarms> {
+                        AlarmsUI(modifier = Modifier.padding(innerPadding))
+                    }
+                    composable<MainScreens.Settings> {
+                        SettingsUI(modifier = Modifier.padding(innerPadding))
+                    }
+
+
+                }
+
+
             }
-
-
         }
     }
 }

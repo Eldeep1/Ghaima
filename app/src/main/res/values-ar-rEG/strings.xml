@@ -24,4 +24,21 @@
     <string name="meter_per_second">متر في الثانية (m/s)</string>
     <string name="miles_per_hour">ميل في الساعة (mph)</string>
     <string name="start_exploring_ghaima">ابدأ باستكشاف غَيْمَة</string>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_saved">المحفوظات</string>
+    <string name="nav_alarms">التنبيهات</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="oops">عذراً!</string>
+    <string name="try_again">حاول مرة أخرى</string>
+    <string name="error_connection">تحقق من اتصالك بالإنترنت وحاول مرة أخرى</string>
+    <string name="error_server">حدث خطأ في الخادم، حاول مرة أخرى لاحقاً</string>
+    <string name="error_empty_data">بيانات الطقس فارغة</string>
+    <string name="error_unknown">خطأ غير معروف</string>
+    <string name="humid">رطوبة</string>
+    <string name="wind">رياح</string>
+    <string name="pres">ضغط</string>
+    <string name="cloud">غيوم</string>
+    <string name="today">اليوم</string>
+    <string name="next_24_hours">الـ 24 ساعة القادمة</string>
+    <string name="_5_day_forecast">توقعات الطقس لمدة 5 أيام</string>
 </resources>

@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.depogramming.ghaima"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -96,6 +96,8 @@ dependencies {
 
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+
+    implementation(libs.gson)
 
     ksp(libs.dagger.compiler)
 
