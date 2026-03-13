@@ -53,6 +53,7 @@ import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.Uni
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.savedlocations.view.SavedLocationsUI
 import com.depogramming.ghaima.presentation.settings.view.SettingsUI
+import com.depogramming.ghaima.presentation.settings.viewmodel.SettingsViewModel
 import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModel
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModelFactory
@@ -262,7 +263,12 @@ fun GhaimaApp(navController: NavHostController) {
                         AlarmsUI(modifier = Modifier.padding(innerPadding))
                     }
                     composable<MainScreens.Settings> {
-                        SettingsUI(modifier = Modifier.padding(innerPadding))
+                        val settingsScreenViewModel: SettingsViewModel = viewModel(
+                            factory = SettingsViewModel.SettingsViewModelFactory(
+                                userSettingsRepo,
+                            )
+                        )
+                        SettingsUI(modifier = Modifier.padding(innerPadding),settingsScreenViewModel)
                     }
 
 
