@@ -87,7 +87,6 @@ class OnboardingViewModel(
     fun getLanguages() {
         viewModelScope.launch {
             _languages.value = userSettingsRepo.getLanguages()
-            _selectedLanguage.value = _languages.value[0]
         }
     }
 

@@ -191,7 +191,7 @@ fun WindSpeedUnits(
         ) {
             Spacer(Modifier.height(24.dp))
             Text(
-                text = stringResource(R.string.temperature),
+                text = stringResource(R.string.wind_speed_title),
                 color = Color.White.copy(alpha = .6f),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
