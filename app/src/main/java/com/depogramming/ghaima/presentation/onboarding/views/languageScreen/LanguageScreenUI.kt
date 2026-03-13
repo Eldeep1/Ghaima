@@ -130,7 +130,7 @@ fun LanguageListScreen(
 ) {
 
     //TODO get the selected language from the view model
-    var selectedLanguage by remember { mutableStateOf(viewModel.selectedLanguage) }
+    var selectedLanguage by remember { mutableStateOf(viewModel.selectedLanguage.value) }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
