@@ -2,7 +2,7 @@ package com.depogramming.ghaima.data.network
 
 import com.depogramming.ghaima.BuildConfig
 import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListService
-import com.depogramming.ghaima.data.weather.remote.WeatherForeCastService
+import com.depogramming.ghaima.data.weather.datasource.remote.WeatherForeCastService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

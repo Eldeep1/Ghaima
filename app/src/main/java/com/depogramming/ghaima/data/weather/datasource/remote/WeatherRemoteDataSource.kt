@@ -1,6 +1,5 @@
-package com.depogramming.ghaima.data.weather.remote
+package com.depogramming.ghaima.data.weather.datasource.remote
 
-import com.depogramming.ghaima.data.weather.model.WeatherForeCastDTO
 import retrofit2.Response
 
 class WeatherRemoteDataSource (private val weatherForeCastService: WeatherForeCastService){

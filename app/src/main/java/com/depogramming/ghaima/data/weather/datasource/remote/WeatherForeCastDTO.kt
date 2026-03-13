@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.data.weather.model
+package com.depogramming.ghaima.data.weather.datasource.remote
 
 import com.google.gson.annotations.SerializedName
 
