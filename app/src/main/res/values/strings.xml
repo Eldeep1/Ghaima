@@ -27,4 +27,18 @@
     <string name="nav_saved">SAVED</string>
     <string name="nav_alarms">ALARMS</string>
     <string name="nav_settings">SETTINGS</string>
+    <string name="oops">Oops!</string>
+    <string name="try_again">Try Again</string>
+    <string name="error_connection">Check Your Connection And Try Again</string>
+    <string name="error_server">Server Error Occurred, Try Again Later</string>
+    <string name="error_empty_data">Weather data is empty</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="humid">HUMID</string>
+    <string name="wind">WIND</string>
+    <string name="pres">PRES</string>
+    <string name="cloud">CLOUD</string>
+    <string name="today">Today</string>
+    <string name="next_24_hours">Next 24 Hours</string>
+    <string name="_5_day_forecast">5-Day Forecast</string>
+
 </resources>
