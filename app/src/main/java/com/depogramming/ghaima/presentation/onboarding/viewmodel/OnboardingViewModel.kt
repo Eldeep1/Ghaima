@@ -91,16 +91,11 @@ class OnboardingViewModel(
         val windSelectedIndex = _selectedWindSpeedIndex.value
         val windDbValueToSave = availableWindSpeeds[windSelectedIndex].dbValue
         viewModelScope.launch {
-            val currentSettings = userSettingsRepo.getUserData().firstOrNull()
-                ?: UserSettingsModel(null, null, null, null)
+            updateSettings {
+                onComplete()
+                it.copy(units = tempApiValueToSave,windSpeedUnit=windDbValueToSave)
 
-            val newSettings = currentSettings.copy(
-                units = tempApiValueToSave,
-                windSpeedUnit = windDbValueToSave
-            )
-
-            userSettingsRepo.setUserSettings(newSettings)
-            onComplete()
+            }
         }
 
     }
@@ -125,13 +120,8 @@ class OnboardingViewModel(
 
     fun finishLanguageSelection(onNextClick:()->Unit){
         viewModelScope.launch {
-            val currentSettings = userSettingsRepo.getUserData().firstOrNull()
-                ?: UserSettingsModel(null, null, null, null)
 
-            val updatedSettings = currentSettings.copy(
-                languageCode = selectedLanguage.languageCode
-            )
-            userSettingsRepo.setUserSettings(updatedSettings)
+            updateSettings { it.copy(languageCode = selectedLanguage.languageCode) }
             onNextClick()
         }
     }
@@ -143,17 +133,17 @@ class OnboardingViewModel(
         AppCompatDelegate.setApplicationLocales(localeList)
 
         viewModelScope.launch {
-            val currentSettings = userSettingsRepo.getUserData().firstOrNull()
-                ?: UserSettingsModel(null, null, null, null)
-
-            val updatedSettings = currentSettings.copy(
-                languageCode = languageModel.languageCode
-            )
-            userSettingsRepo.setUserSettings(updatedSettings)
+            updateSettings { it.copy(languageCode = languageModel.languageCode) }
         }
 
     }
 
+    private suspend fun updateSettings(update: (UserSettingsModel) -> UserSettingsModel) {
+        val currentSettings = userSettingsRepo.getUserData().firstOrNull()
+            ?: UserSettingsModel(null, null, null, null)
+
+        userSettingsRepo.setUserSettings(update(currentSettings))
+    }
     fun onLocationPermissionResult(fineLocationGranted: Boolean, coarseLocationGranted: Boolean) {
         if (fineLocationGranted || coarseLocationGranted) {
             getLocation()
@@ -241,10 +231,11 @@ class OnboardingViewModel(
     }
 
     fun getAddressFromLocation(location: Location) {
-        viewModelScope.launch {
+
             val geocoder = Geocoder(application, Locale.getDefault())
             val lat = location.latitude
             val lon = location.longitude
+        viewModelScope.launch {
             val addressName = try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     suspendCancellableCoroutine { continuation ->
@@ -269,12 +260,7 @@ class OnboardingViewModel(
                 place = addressName
             )
 
-            val currentSettings = userSettingsRepo.getUserData().firstOrNull()
-                ?: UserSettingsModel(null, null, null, null)
-            val updatedSettings = currentSettings.copy(
-                location = locationModel
-            )
-            userSettingsRepo.setUserSettings(updatedSettings)
+            updateSettings { it.copy(location = locationModel) }
         }
     }
 
