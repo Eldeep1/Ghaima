@@ -24,8 +24,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.depogramming.ghaima.R
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+
+import androidx.compose.ui.res.painterResource
+
+import com.depogramming.ghaima.R
 @Composable
 fun NextButton(
     modifier: Modifier=Modifier,
@@ -86,6 +96,72 @@ fun ExpandingPageIndicator(
                     .clip(CircleShape)
                     .background(color)
             )
+        }
+    }
+}
+
+@Composable
+fun SettingsSelectionCard(
+    titleResId: Int,
+    optionsResIds: List<Int>,
+    selectedIndex: Int,
+    onOptionSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = .2f))
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(id = titleResId),
+                color = Color.White.copy(alpha = .6f),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            optionsResIds.forEachIndexed { index, optionTitleResId ->
+                val isSelected = index == selectedIndex
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp).clip(RoundedCornerShape(12.dp))
+                        .clickable {
+                            onOptionSelected(index)
+                        }.padding(horizontal = 8.dp) ,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(id = optionTitleResId),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    Image(
+                        painter = painterResource(
+                            if (isSelected) R.drawable.selected_row else R.drawable.unselected_row
+                        ),
+                        contentDescription = if (isSelected) "Selected" else "Unselected"
+                    )
+                }
+
+                if (index < optionsResIds.size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        color = Color.White.copy(alpha = 0.1f),
+                        thickness = 1.dp
+                    )
+                }
+            }
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
