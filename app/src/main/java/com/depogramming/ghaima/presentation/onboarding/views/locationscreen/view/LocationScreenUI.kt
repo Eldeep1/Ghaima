@@ -1,6 +1,8 @@
 package com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view
 
 import android.Manifest
+import android.provider.Settings
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -36,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,10 +63,8 @@ fun LocationScreenUI(
 
         viewModel.onLocationPermissionResult(fineLocationGranted, coarseLocationGranted)
     }
+    val context = LocalContext.current
 
-    if(viewModel.enabledLocationSettings==false){
-        viewModel.requestUserLocation(true)
-    }
     LaunchedEffect(Unit) {
         viewModel.askForPermission.collect {
             locationPermissionsLauncher.launch(
@@ -74,7 +75,12 @@ fun LocationScreenUI(
             )
         }
     }
-
+    LaunchedEffect(Unit) {
+        viewModel.openLocationSettingsEvent.collect {
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            context.startActivity(intent)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -113,13 +119,11 @@ fun LocationScreenUI(
             NextButton(
                 text = stringResource(R.string.use_my_current_location)
             ) {
-                viewModel.requestUserLocation(true)
+                viewModel.fetchLocation()
             }
             Spacer(Modifier.height(24.dp))
 
-            LocationSelectionCard(
-
-            ){
+            LocationSelectionCard {
                 onMapSelectionButtonClick()
             }
 

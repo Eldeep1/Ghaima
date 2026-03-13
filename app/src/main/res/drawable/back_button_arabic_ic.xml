@@ -2,19 +2,18 @@
     android:width="40dp"
     android:height="40dp"
     android:viewportWidth="40"
-    android:autoMirrored="true"
     android:viewportHeight="40">
   <path
-      android:pathData="M20,0L20,0A20,20 0,0 1,40 20L40,20A20,20 0,0 1,20 40L20,40A20,20 0,0 1,0 20L0,20A20,20 0,0 1,20 0z"
+      android:pathData="M20,40L20,40A20,20 0,0 1,0 20L0,20A20,20 0,0 1,20 0L20,0A20,20 0,0 1,40 20L40,20A20,20 0,0 1,20 40z"
       android:fillColor="#ffffff"
       android:fillAlpha="0.15"/>
   <path
       android:strokeWidth="1"
-      android:pathData="M20,0.5L20,0.5A19.5,19.5 0,0 1,39.5 20L39.5,20A19.5,19.5 0,0 1,20 39.5L20,39.5A19.5,19.5 0,0 1,0.5 20L0.5,20A19.5,19.5 0,0 1,20 0.5z"
+      android:pathData="M20,39.5L20,39.5A19.5,19.5 0,0 1,0.5 20L0.5,20A19.5,19.5 0,0 1,20 0.5L20,0.5A19.5,19.5 0,0 1,39.5 20L39.5,20A19.5,19.5 0,0 1,20 39.5z"
       android:strokeAlpha="0.2"
       android:fillColor="#00000000"
       android:strokeColor="#ffffff"/>
   <path
-      android:pathData="M15.825,21L21.425,26.6L20,28L12,20L20,12L21.425,13.4L15.825,19H28V21H15.825Z"
+      android:pathData="M24.175,19L18.575,13.4L20,12L28,20L20,28L18.575,26.6L24.175,21H12L12,19H24.175V19"
       android:fillColor="#ffffff"/>
 </vector>

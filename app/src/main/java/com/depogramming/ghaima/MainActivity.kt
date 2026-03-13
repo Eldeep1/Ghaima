@@ -57,6 +57,7 @@ import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModel
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModelFactory
 import com.depogramming.ghaima.presentation.utils.MyBottomNavigationBar
+import com.depogramming.ghaima.presentation.utils.location.LocationHelper
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
 
 class MainActivity : AppCompatActivity() {
@@ -163,7 +164,7 @@ fun GhaimaApp(navController: NavHostController) {
                             viewModelStoreOwner = parentEntry,
                             factory = OnboardingViewModelFactory(
                                 userSettingsRepo,
-                                LocalActivity.current?.application ?: Application()
+                                LocationHelper(LocalActivity.current?.application ?: Application())
                             )
                         )
                         LanguageScreenUI(
@@ -183,7 +184,7 @@ fun GhaimaApp(navController: NavHostController) {
                             viewModelStoreOwner = parentEntry,
                             factory = OnboardingViewModelFactory(
                                 userSettingsRepo,
-                                LocalActivity.current?.application ?: Application()
+                                LocationHelper(LocalActivity.current?.application ?: Application())
                             )
                         )
                         LocationScreenUI(
@@ -208,7 +209,7 @@ fun GhaimaApp(navController: NavHostController) {
                             viewModelStoreOwner = parentEntry,
                             factory = OnboardingViewModelFactory(
                                 userSettingsRepo,
-                                LocalActivity.current?.application ?: Application()
+                                LocationHelper(LocalActivity.current?.application ?: Application())
                             )
                         )
                         UnitsScreenUI(viewModel = sharedViewModel) {
@@ -231,7 +232,7 @@ fun GhaimaApp(navController: NavHostController) {
                         factory = MapSelectionViewModelFactory(
                             userSettingsRepo,
                             weatherRepository,
-                            LocalActivity.current?.application ?: Application()
+                            LocationHelper(LocalActivity.current?.application ?: Application())
                         )
                     )
                     MapSelectionScreenUI(
