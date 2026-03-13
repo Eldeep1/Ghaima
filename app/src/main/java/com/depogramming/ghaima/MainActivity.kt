@@ -232,7 +232,7 @@ fun GhaimaApp(navController: NavHostController) {
                         factory = MapSelectionViewModelFactory(
                             userSettingsRepo,
                             weatherRepository,
-                            LocalActivity.current?.application ?: Application()
+                            LocationHelper(LocalActivity.current?.application ?: Application())
                         )
                     )
                     MapSelectionScreenUI(

@@ -1,9 +1,6 @@
 package com.depogramming.ghaima.presentation.mapselection.viewmodel
 
-import android.app.Application
-import android.location.Address
-import android.location.Geocoder
-import android.os.Build
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,7 +9,7 @@ import com.depogramming.ghaima.data.weather.model.LocationModel
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
-import kotlinx.coroutines.Dispatchers
+import com.depogramming.ghaima.presentation.utils.location.LocationHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -21,15 +18,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import java.util.Locale
-import kotlin.coroutines.resume
+
 
 class MapSelectionViewModel(
     val userSettingsRepository: UserSettingsRepo,
     val weatherRepository: WeatherRepositoryImpl,
-    val application: Application
+    private val locationHelper: LocationHelper
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -71,7 +65,7 @@ class MapSelectionViewModel(
         if (result.isSuccess) {
             _searchResults.value = result.getOrNull() ?: emptyList()
         } else {
-
+            //should tell the user to check his connection and try again...
         }
     }
 
@@ -98,57 +92,17 @@ class MapSelectionViewModel(
             userSettingsRepository.setUserSettings(newSettings)
     }
 
+
     fun updateLocationFromMap(lat: Double, lng: Double) {
-        getAddressFromLocation(lat, lng)
-    }
-
-    fun getAddressFromLocation(lat: Double, lon: Double) {
         viewModelScope.launch {
-            val geocoder = Geocoder(application, Locale.getDefault())
 
-            val addressName = try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    suspendCancellableCoroutine { continuation ->
-                        geocoder.getFromLocation(lat, lon, 1) { addresses ->
-                            continuation.resume(formatAddress(addresses, lat, lon))
-                        }
-                    }
-                } else {
-                    withContext(Dispatchers.IO) {
-                        @Suppress("DEPRECATION")
-                        val addresses = geocoder.getFromLocation(lat, lon, 1)
-                        formatAddress(addresses, lat, lon)
-                    }
-                }
-            } catch (e: Exception) {
-                "$lat, $lon"
-            }
+            val addressName = locationHelper.getAddressFromLocation(lat, lng)
 
             _selectedLocation.value = _selectedLocation.value.copy(
                 latitude = lat,
-                longitude = lon,
+                longitude = lng,
                 place = addressName
             )
-
-        }
-    }
-
-    private fun formatAddress(addresses: List<Address>?, lat: Double, lon: Double): String {
-        if (addresses.isNullOrEmpty()) return "$lat, $lon"
-
-        val address = addresses[0]
-
-        val validParts = listOfNotNull(
-            address.locality,
-            address.subAdminArea,
-            address.adminArea,
-            address.countryName
-        ).distinct()
-
-        return if (validParts.isNotEmpty()) {
-            validParts.joinToString(", ")
-        } else {
-            "$lat, $lon"
         }
     }
 }
@@ -157,9 +111,9 @@ class MapSelectionViewModel(
 class MapSelectionViewModelFactory(
     val userSettingsRepository: UserSettingsRepo,
     val weatherRepository: WeatherRepositoryImpl,
-    val application: Application
+    private val locationHelper: LocationHelper
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MapSelectionViewModel(userSettingsRepository, weatherRepository, application) as T
+        return MapSelectionViewModel(userSettingsRepository, weatherRepository, locationHelper) as T
     }
 }
