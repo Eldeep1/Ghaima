@@ -40,5 +40,9 @@
     <string name="today">Today</string>
     <string name="next_24_hours">Next 24 Hours</string>
     <string name="_5_day_forecast">5-Day Forecast</string>
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
 
 </resources>
