@@ -15,13 +15,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,47 +39,89 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.depogramming.ghaima.R
+import com.depogramming.ghaima.data.weather.model.CurrentWeatherModel
+import com.depogramming.ghaima.data.weather.model.DailyWeatherModel
+import com.depogramming.ghaima.data.weather.model.HourlyWeatherModel
+import com.depogramming.ghaima.data.weather.model.WeatherForecastModel
+import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModel
+import com.depogramming.ghaima.presentation.home.viewmodel.HomeWeatherStates
 
 @Composable
-fun HomeScreenUI(modifier: Modifier = Modifier) {
+fun HomeScreenUI(modifier: Modifier = Modifier,viewModel: HomeScreenViewModel) {
+    val uiState by viewModel.homeWeatherState.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
 
     ) {
-        HomeScreenContent()
+        when (uiState) {
+            is HomeWeatherStates.Loading -> {
+                HomeScreenLoading()
+            }
+            is HomeWeatherStates.Error -> {
+                val errorMessage = (uiState as HomeWeatherStates.Error).error
+                HomeScreenError(errorMessage = errorMessage) {
+                    viewModel.refreshWeather()
+                }
+            }
+            is HomeWeatherStates.Success -> {
+                val weatherData = (uiState as HomeWeatherStates.Success).data
+                HomeScreenContent(weatherData = weatherData)
+            }
+        }
     }
 }
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier) {
+fun HomeScreenContent(
+    weatherData: WeatherForecastModel,
+    modifier: Modifier = Modifier
+) {
     val scrollState = rememberScrollState()
     Column(
-        modifier = modifier.padding(horizontal = 24.dp).
-        verticalScroll(scrollState),
+        modifier = modifier
+            .padding(horizontal = 24.dp)
+            .verticalScroll(scrollState),
     ) {
-        CustomAppBar()
-        TodayWeather()
-        HourlyForeCast()
-        Spacer(modifier = Modifier.height(24.dp))
-        WeekForeCast()
-        Spacer(modifier = Modifier.height(48.dp))
+        CustomAppBar(cityName = weatherData.cityName)
+        TodayWeather(currentWeather = weatherData.current)
+        HourlyForeCast(hourlyList = weatherData.hourlyForecast)
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        WeekForeCast(dailyList = weatherData.dailyForecast)
+
+        Spacer(modifier = Modifier.height(48.dp))
     }
 }
 
 @Composable
 fun HomeScreenLoading(modifier: Modifier = Modifier) {
-
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(color = Color.White)
+    }
 }
 
 @Composable
-fun HomeScreenError(modifier: Modifier = Modifier) {
-
+fun HomeScreenError(errorMessage: String, onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Oops!", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = errorMessage, color = Color.White.copy(alpha = 0.8f))
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onRetry) {
+            Text(text = "Try Again")
+        }
+    }
 }
 
 @Composable
-fun CustomAppBar(modifier: Modifier = Modifier) {
+fun CustomAppBar(cityName: String,modifier: Modifier = Modifier) {
     Spacer(Modifier.height(48.dp))
     Row(modifier = modifier) {
         Text(
@@ -122,7 +169,7 @@ fun CustomAppBar(modifier: Modifier = Modifier) {
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
-                    text = "value from view model",
+                    text = cityName,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     color = Color.White,
@@ -134,7 +181,7 @@ fun CustomAppBar(modifier: Modifier = Modifier) {
     }
 }
 @Composable
-fun TodayWeather() {
+fun TodayWeather(currentWeather: CurrentWeatherModel) {
     Spacer(Modifier.height(16.dp))
 
     Box(
@@ -170,7 +217,7 @@ fun TodayWeather() {
         ) {
 
             Text(
-                text = "Monday, 12 Feb | 10:30 AM",
+                text = currentWeather.dateAndTime,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 color = Color.White.copy(alpha = 0.8f),
@@ -181,7 +228,7 @@ fun TodayWeather() {
             Spacer(Modifier.height(24.dp))
 
             Image(
-                painter = painterResource(R.drawable.snow_ic),
+                painter = painterResource(currentWeather.iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(120.dp)
             )
@@ -189,14 +236,14 @@ fun TodayWeather() {
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "2°C",
+                text = currentWeather.temperature,
                 fontSize = 80.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
             )
 
             Text(
-                text = "Light Snowfall",
+                text = currentWeather.description,
                 fontSize = 20.sp,
                 color = Color.White,
                 fontWeight = FontWeight.Medium,
@@ -219,17 +266,17 @@ fun TodayWeather() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                WeatherStatItem(R.drawable.humidity_ic, "HUMID", "84%")
-                WeatherStatItem(R.drawable.wind_ic, "WIND", "12km/h")
-                WeatherStatItem(R.drawable.pressure_ic, "PRES", "1012")
-                WeatherStatItem(R.drawable.cloud_ic, "CLOUD", "92%")
+                WeatherStatItem(R.drawable.humidity_ic, "HUMID", currentWeather.humidity)
+                WeatherStatItem(R.drawable.wind_ic, "WIND", currentWeather.windSpeed)
+                WeatherStatItem(R.drawable.pressure_ic, "PRES", currentWeather.pressure)
+                WeatherStatItem(R.drawable.cloud_ic, "CLOUD", currentWeather.cloudCover)
             }
         }
     }
 }
 
 @Composable
-fun HourlyForeCast(modifier: Modifier = Modifier) {
+fun HourlyForeCast(hourlyList: List<HourlyWeatherModel>, modifier: Modifier = Modifier) {
     Spacer(modifier = Modifier.height(42.dp))
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -257,15 +304,11 @@ fun HourlyForeCast(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            items(8) { index ->
-                val icon = if (index == 0) R.drawable.snow_ic else R.drawable.cloud_ic
-                val temp = "${1 + index}°C"
-                val time = "${11 + index}:00"
-
+            items(hourlyList) { item ->
                 HourlyWeatherItem(
-                    time = time,
-                    iconRes = icon,
-                    temperature = temp
+                    time = item.time,
+                    iconRes = item.iconResId,
+                    temperature = item.temperature
                 )
             }
         }
@@ -273,7 +316,7 @@ fun HourlyForeCast(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WeekForeCast(modifier: Modifier = Modifier) {
+fun WeekForeCast(dailyList: List<DailyWeatherModel>, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -287,23 +330,13 @@ fun WeekForeCast(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
-        val fakeDays = listOf(
-            Triple("Tomorrow", R.drawable.cloud_ic to "Cloudy", "4°" to "-2°"),
-            Triple("Wednesday", R.drawable.cloudy_night_ic to "Sunny", "6°" to "-1°"),
-            Triple("Thursday", R.drawable.clear_day_ic to "Showers", "3°" to "0°"),
-            Triple("Friday", R.drawable.snow_ic to "Snow", "1°" to "-4°"),
-            Triple("Saturday", R.drawable.cloud_ic to "Fair", "5°" to "-1°")
-        )
-
-
-        fakeDays.forEach { (day, weather, temps) ->
+        dailyList.forEach { day->
             DailyWeatherItem(
-                day = day,
-                iconRes = weather.first,
-                description = weather.second,
-                highTemp = temps.first,
-                lowTemp = temps.second
+                day = day.dayOfWeek,
+                iconRes = day.iconResId,
+                description = day.description,
+                highTemp = day.highTemp,
+                lowTemp = day.lowTemp
             )
             Spacer(modifier = Modifier.height(12.dp))
         }

@@ -35,8 +35,11 @@ import com.depogramming.ghaima.data.network.Network
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
+import com.depogramming.ghaima.data.weather.remote.WeatherRemoteDataSource
 import com.depogramming.ghaima.presentation.alarms.view.AlarmsUI
 import com.depogramming.ghaima.presentation.home.view.HomeScreenUI
+import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModel
+import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
@@ -77,7 +80,10 @@ fun GhaimaApp(navController: NavHostController) {
 
     val countriesListService = Network.countriesListService
     val countriesListRemoteDataSource = CountriesListRemoteDataSource(countriesListService)
-    val weatherRepository = WeatherRepositoryImpl(countriesListRemoteDataSource)
+
+    val weatherForeCastService= Network.weatherForeCastService
+    val weatherRemoteDataSource= WeatherRemoteDataSource(weatherForeCastService)
+    val weatherRepository = WeatherRepositoryImpl(countriesListRemoteDataSource,weatherRemoteDataSource)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -238,7 +244,13 @@ fun GhaimaApp(navController: NavHostController) {
                     startDestination = MainScreens.Home
                 ) {
                     composable<MainScreens.Home> {
-                        HomeScreenUI(modifier = Modifier.padding(innerPadding))
+                        val homeScreenViewModel: HomeScreenViewModel = viewModel(
+                            factory = HomeScreenViewModelFactory(
+                                weatherRepository,
+                                userSettingsRepo,
+                            )
+                        )
+                        HomeScreenUI(modifier = Modifier.padding(innerPadding),homeScreenViewModel)
                     }
                     composable<MainScreens.SavedLocations> {
                         SavedLocationsUI(modifier = Modifier.padding(innerPadding))
