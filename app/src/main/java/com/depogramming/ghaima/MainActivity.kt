@@ -30,7 +30,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.depogramming.ghaima.data.db.AppDatabase
-import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListRemoteDataSource
 import com.depogramming.ghaima.data.network.Network
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
@@ -81,13 +80,11 @@ fun GhaimaApp(navController: NavHostController) {
     val settingsDataSource = UserSettingsLocalDataSource(settingsDao)
     val userSettingsRepo = UserSettingsRepoImp(settingsDataSource)
 
-    val countriesListService = Network.countriesListService
-    val countriesListRemoteDataSource = CountriesListRemoteDataSource(countriesListService)
 
-    val weatherForeCastService= Network.weatherForeCastService
+    val weatherForeCastService= Network.weatherService
     val weatherRemoteDataSource= WeatherRemoteDataSource(weatherForeCastService)
     val weatherLocalDataSource= WeatherLocalDataSource(AppDatabase.getInstance(LocalContext.current).weatherForecastDao())
-    val weatherRepository = WeatherRepositoryImpl(countriesListRemoteDataSource,weatherRemoteDataSource,weatherLocalDataSource)
+    val weatherRepository = WeatherRepositoryImpl(weatherRemoteDataSource,weatherLocalDataSource)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

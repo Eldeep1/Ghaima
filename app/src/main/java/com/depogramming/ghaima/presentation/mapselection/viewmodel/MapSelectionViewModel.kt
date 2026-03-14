@@ -4,7 +4,7 @@ package com.depogramming.ghaima.presentation.mapselection.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListNetworkResponse
+import com.depogramming.ghaima.data.weather.datasource.remote.dto.CountriesListDTO
 import com.depogramming.ghaima.data.weather.model.LocationModel
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
@@ -30,7 +30,7 @@ class MapSelectionViewModel(
     val searchQuery = _searchQuery.asStateFlow()
 
 
-    private val _searchResults = MutableStateFlow<List<CountriesListNetworkResponse>>(emptyList())
+    private val _searchResults = MutableStateFlow<List<CountriesListDTO>>(emptyList())
     val searchResults = _searchResults.asStateFlow()
     private val _selectedLocation =
         MutableStateFlow(LocationModel(30.0444, 31.2357, "Cairo, Egypt"))
@@ -69,7 +69,7 @@ class MapSelectionViewModel(
         }
     }
 
-    fun onCitySelected(city: CountriesListNetworkResponse) {
+    fun onCitySelected(city: CountriesListDTO) {
         _selectedLocation.value = _selectedLocation.value.copy(
             latitude = city.lat,
             longitude = city.lon,

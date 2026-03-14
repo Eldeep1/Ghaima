@@ -1,8 +1,7 @@
 package com.depogramming.ghaima.data.network
 
 import com.depogramming.ghaima.BuildConfig
-import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListService
-import com.depogramming.ghaima.data.weather.datasource.remote.WeatherForeCastService
+import com.depogramming.ghaima.data.weather.datasource.remote.WeatherService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -34,11 +33,8 @@ object Network {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    val countriesListService: CountriesListService by lazy {
-        retrofit.create(CountriesListService::class.java)
-    }
-    val weatherForeCastService: WeatherForeCastService by lazy {
-        retrofit.create(WeatherForeCastService::class.java)
+    val weatherService: WeatherService by lazy {
+        retrofit.create(WeatherService::class.java)
     }
 
 }

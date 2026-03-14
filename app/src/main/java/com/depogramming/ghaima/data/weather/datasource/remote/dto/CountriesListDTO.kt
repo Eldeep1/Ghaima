@@ -1,9 +1,9 @@
-package com.depogramming.ghaima.data.mapselection.datasource.remote
+package com.depogramming.ghaima.data.weather.datasource.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
 
-data class CountriesListNetworkResponse(
+data class CountriesListDTO(
     val name: String,
     @SerializedName("local_names")
     val localNames: LocalNames?,

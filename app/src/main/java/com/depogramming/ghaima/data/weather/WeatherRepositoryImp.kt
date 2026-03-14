@@ -1,8 +1,7 @@
 package com.depogramming.ghaima.data.weather
 
 
-import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListNetworkResponse
-import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListRemoteDataSource
+import com.depogramming.ghaima.data.weather.datasource.remote.dto.CountriesListDTO
 import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
 import com.depogramming.ghaima.data.weather.model.WeatherForecastModel
 import com.depogramming.ghaima.data.weather.mapper.toWeatherForecastModel
@@ -12,25 +11,21 @@ import com.depogramming.ghaima.presentation.utils.TemperatureUnit
 import com.depogramming.ghaima.presentation.utils.WindSpeedUnit
 
 class WeatherRepositoryImpl(
-    private val countriesListRemoteDataSource: CountriesListRemoteDataSource,
     private val weatherRemoteDataSource: WeatherRemoteDataSource,
     private val weatherLocalDataSource: WeatherLocalDataSource,
 ) {
 
-    suspend fun searchCity(query: String): Result<List<CountriesListNetworkResponse>> {
+    suspend fun searchCity(query: String): Result<List<CountriesListDTO>> {
 
         return try {
-            val response = countriesListRemoteDataSource.searchCity(query)
+            val response = weatherRemoteDataSource.searchCity(query)
+
             if (response.isSuccessful) {
-                println("ther's no error acutally")
                 Result.success(response.body() ?: emptyList())
             } else {
-                println("the error is:")
                 Result.failure(Exception("API Error: ${response.code()}"))
             }
         } catch (e: Exception) {
-            println("the error is: ${e.printStackTrace()}")
-
             Result.failure(e)
 
         }
