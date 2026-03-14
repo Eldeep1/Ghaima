@@ -83,7 +83,7 @@ fun GhaimaApp(navController: NavHostController) {
 
     val weatherForeCastService= Network.weatherService
     val weatherRemoteDataSource= WeatherRemoteDataSource(weatherForeCastService)
-    val weatherLocalDataSource= WeatherLocalDataSource(AppDatabase.getInstance(LocalContext.current).weatherForecastDao())
+    val weatherLocalDataSource= WeatherLocalDataSource(AppDatabase.getInstance(LocalContext.current).weatherForecastDao(),AppDatabase.getInstance(LocalContext.current).favouritesDao())
     val weatherRepository = WeatherRepositoryImpl(weatherRemoteDataSource,weatherLocalDataSource)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()

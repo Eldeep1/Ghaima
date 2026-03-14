@@ -1,9 +1,9 @@
-package com.depogramming.ghaima.data.weather.datasource.local
+package com.depogramming.ghaima.data.weather.datasource.local.entity
 
 import androidx.room.Entity
 import androidx.room.Embedded
 import androidx.room.PrimaryKey
-import com.depogramming.ghaima.data.weather.model.CurrentWeatherModel
+import com.depogramming.ghaima.data.weather.model.WeatherData
 import com.depogramming.ghaima.data.weather.model.DailyWeatherModel
 import com.depogramming.ghaima.data.weather.model.HourlyWeatherModel
 
@@ -18,7 +18,7 @@ data class WeatherForecastEntity(
 
 
     @Embedded
-    val current: CurrentWeatherModel,
+    val current: WeatherData,
 
     val hourlyForecast: List<HourlyWeatherModel>,
     val dailyForecast: List<DailyWeatherModel>

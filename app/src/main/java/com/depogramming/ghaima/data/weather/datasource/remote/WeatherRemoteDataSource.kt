@@ -1,6 +1,7 @@
 package com.depogramming.ghaima.data.weather.datasource.remote
 
 import com.depogramming.ghaima.data.weather.datasource.remote.dto.CountriesListDTO
+import com.depogramming.ghaima.data.weather.datasource.remote.dto.SingleWeatherDTO
 import com.depogramming.ghaima.data.weather.datasource.remote.dto.WeatherForeCastDTO
 import retrofit2.Response
 
@@ -11,5 +12,8 @@ class WeatherRemoteDataSource (private val weatherService: WeatherService){
     }
     suspend fun getWeatherForeCast(latitude: Double, longitude: Double, language: String): Response<WeatherForeCastDTO> {
         return weatherService.getWeatherForeCast(latitude,longitude,language,"metric")
+    }
+    suspend fun getSingleWeather(latitude: Double, longitude: Double, language: String): Response<SingleWeatherDTO>{
+        return weatherService.getSingleWeather(latitude,longitude,language,"metric")
     }
 }

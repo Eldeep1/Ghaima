@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.data.weather.model.CurrentWeatherModel
+import com.depogramming.ghaima.data.weather.model.WeatherData
 import com.depogramming.ghaima.data.weather.model.DailyWeatherModel
 import com.depogramming.ghaima.data.weather.model.HourlyWeatherModel
 import com.depogramming.ghaima.data.weather.model.WeatherForecastModel
@@ -189,7 +189,7 @@ fun CustomAppBar(cityName: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun TodayWeather(currentWeather: CurrentWeatherModel) {
+fun TodayWeather(currentWeather: WeatherData) {
     Spacer(Modifier.height(16.dp))
 
     Box(
