@@ -269,7 +269,9 @@ fun GhaimaApp(navController: NavHostController) {
                                 locationHelper = LocationHelper(LocalActivity.current?.application ?: Application())
                                 )
                         )
-                        SettingsUI(modifier = Modifier.padding(innerPadding),settingsScreenViewModel)
+                        SettingsUI(modifier = Modifier.padding(innerPadding),settingsScreenViewModel,onMapClick = {
+                            navController.navigate(MapSelectionScreen)
+                        })
                     }
 
 

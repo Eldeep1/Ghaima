@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -30,7 +32,7 @@ class SettingsViewModel(
     val availableTempUnits = TemperatureUnit.entries
 
     fun saveTempSelection(selectedIndex: Int) {
-        _selectedTempUnitIndex.value = selectedIndex
+
         val value = availableTempUnits[selectedIndex].apiValue
 
         viewModelScope.launch {
@@ -44,7 +46,7 @@ class SettingsViewModel(
     val availableWindSpeeds = WindSpeedUnit.entries
 
     fun saveWindSpeedSelection(selectedIndex: Int) {
-        _selectedWindSpeedIndex.value = selectedIndex
+
         val dbValueToSave = availableWindSpeeds[selectedIndex].dbValue
 
         viewModelScope.launch { updateSettings { it.copy(windSpeedUnit = dbValueToSave) } }
@@ -55,7 +57,6 @@ class SettingsViewModel(
     val selectedLanguageIndex = _selectedLanguageIndex.asStateFlow()
     val languagesList = Languages.entries
     fun saveLanguageSelection(selectedIndex: Int) {
-        _selectedLanguageIndex.value = selectedIndex
 
         val languageCode = if (selectedIndex == 0) "en" else "ar"
 
@@ -79,7 +80,6 @@ class SettingsViewModel(
             when (val result = locationHelper.getCurrentLocation()) {
                 is LocationResult.Success -> {
                     updateSettings { it.copy(location = result.location) }
-                    _userLocation.value=result.location
                 }
                 is LocationResult.MissingPermission -> {
                     _askForPermission.emit(Unit)
@@ -109,7 +109,7 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            userSettingsRepo.getUserData().firstOrNull()?.let { savedSettings ->
+            userSettingsRepo.getUserData().filterNotNull().collectLatest { savedSettings ->
 
                 val tempIndex =
                     availableTempUnits.indexOfFirst { it.apiValue == savedSettings.units }

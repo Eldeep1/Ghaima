@@ -50,7 +50,7 @@ import com.depogramming.ghaima.presentation.utils.location.LocationPermissionHan
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsUI(modifier: Modifier = Modifier, viewModel: SettingsViewModel) {
+fun SettingsUI(modifier: Modifier = Modifier, viewModel: SettingsViewModel,onMapClick: () -> Unit) {
     val scrollState = rememberScrollState()
     val sheetState = rememberModalBottomSheetState()
     var showLocationSheet by remember { mutableStateOf(false) }
@@ -99,7 +99,7 @@ fun SettingsUI(modifier: Modifier = Modifier, viewModel: SettingsViewModel) {
                     },
                     onMapClick = {
                         showLocationSheet = false
-//                        onNavigateToMap()
+                        onMapClick()
                     }
                 )
             }
