@@ -5,9 +5,9 @@ import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesList
 import com.depogramming.ghaima.data.mapselection.datasource.remote.CountriesListRemoteDataSource
 import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
 import com.depogramming.ghaima.data.weather.model.WeatherForecastModel
-import com.depogramming.ghaima.data.weather.model.toWeatherForecastModel
+import com.depogramming.ghaima.data.weather.mapper.toWeatherForecastModel
 import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSource
-import com.depogramming.ghaima.data.weather.model.toEntity
+import com.depogramming.ghaima.data.weather.mapper.toEntity
 import com.depogramming.ghaima.presentation.utils.TemperatureUnit
 import com.depogramming.ghaima.presentation.utils.WindSpeedUnit
 

@@ -1,5 +1,6 @@
 package com.depogramming.ghaima.data.weather.datasource.remote
 
+import com.depogramming.ghaima.data.weather.datasource.remote.dto.WeatherForeCastDTO
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

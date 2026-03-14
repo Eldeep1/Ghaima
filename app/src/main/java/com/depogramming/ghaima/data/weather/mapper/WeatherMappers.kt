@@ -1,16 +1,22 @@
-package com.depogramming.ghaima.data.weather.model
+package com.depogramming.ghaima.data.weather.mapper
 
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.data.weather.datasource.local.WeatherForecastEntity
-import com.depogramming.ghaima.data.weather.datasource.remote.Data
-import com.depogramming.ghaima.data.weather.datasource.remote.WeatherForeCastDTO
+import com.depogramming.ghaima.data.weather.datasource.remote.dto.Data
+import com.depogramming.ghaima.data.weather.datasource.remote.dto.WeatherForeCastDTO
 import com.depogramming.ghaima.presentation.utils.TemperatureUnit
 import com.depogramming.ghaima.presentation.utils.WindSpeedUnit
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
+import com.depogramming.ghaima.data.weather.model.WeatherForecastModel
+import com.depogramming.ghaima.data.weather.model.CurrentWeatherModel
+import com.depogramming.ghaima.data.weather.model.HourlyWeatherModel
+import com.depogramming.ghaima.data.weather.model.DailyWeatherModel
+import com.depogramming.ghaima.data.weather.datasource.remote.dto.SingleWeatherDTO
+import java.text.SimpleDateFormat
+import java.util.Date
 
 fun WeatherForeCastDTO.toWeatherForecastModel(
     sourceTempUnit: TemperatureUnit,
@@ -174,6 +180,29 @@ fun WeatherForecastEntity.toWeatherForecastModel(): WeatherForecastModel {
         hourlyForecast = this.hourlyForecast,
         dailyForecast = this.dailyForecast
     )
+}
+
+fun SingleWeatherDTO.toCurrentWeatherModel(): CurrentWeatherModel {
+    val weatherData = this.weather.firstOrNull()
+
+    return CurrentWeatherModel(
+        dateAndTime = formatUnixTime(this.dt),
+        temperature = "${this.main.temp.toInt()}°",
+        description = weatherData?.description?.replaceFirstChar { it.uppercase() } ?: "Unknown",
+        iconResId = getWeatherIconRes(weatherData?.icon ?: ""),
+        humidity = "${this.main.humidity}%",
+        windSpeed = "${this.wind.speed}",
+        pressure = "${this.main.pressure} hPa",
+        cloudCover = "${this.clouds.all}%"
+    )
+}
+
+private fun formatUnixTime(unixSeconds: Long): String {
+
+    val date = Date(unixSeconds * 1000L)
+
+    val sdf = SimpleDateFormat("EEE, d MMM HH:mm", Locale.getDefault())
+    return sdf.format(date)
 }
 
 private fun getWeatherIconRes(iconCode: String): Int {
