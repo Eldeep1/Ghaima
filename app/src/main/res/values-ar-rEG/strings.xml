@@ -41,4 +41,10 @@
     <string name="today">اليوم</string>
     <string name="next_24_hours">الـ 24 ساعة القادمة</string>
     <string name="_5_day_forecast">توقعات الطقس لمدة 5 أيام</string>
+    <string name="settings">الإعدادات</string>
+    <string name="language">اللغة</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="location">الموقع</string>
+    <string name="update_location">تحديث الموقع</string>
 </resources>
