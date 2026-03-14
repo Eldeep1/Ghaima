@@ -7,8 +7,13 @@ import com.depogramming.ghaima.data.weather.model.WeatherForecastModel
 import com.depogramming.ghaima.data.weather.mapper.toWeatherForecastModel
 import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSource
 import com.depogramming.ghaima.data.weather.mapper.toEntity
+import com.depogramming.ghaima.data.weather.mapper.toFavouriteWeatherModel
+import com.depogramming.ghaima.data.weather.mapper.toFavouritesEntity
+import com.depogramming.ghaima.data.weather.model.FavouriteWeatherModel
 import com.depogramming.ghaima.presentation.utils.TemperatureUnit
 import com.depogramming.ghaima.presentation.utils.WindSpeedUnit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class WeatherRepositoryImpl(
     private val weatherRemoteDataSource: WeatherRemoteDataSource,
@@ -28,6 +33,76 @@ class WeatherRepositoryImpl(
         } catch (e: Exception) {
             Result.failure(e)
 
+        }
+    }
+
+    //adding location to favourites flow
+    //1. the user selects a place on the map
+    //2. we get that place information
+    //3. we store that information on map
+    //4. the stored information is stored on the map
+    //----------------------------------------------------
+    //opening the favourites tab again:
+    //1. get list of stored favourites
+    //2. if there's connection, then hit the api and update the database
+    //3. if there's no connection, then just show the retrieved data
+    //--------------------------------------------------
+    // so, functions should be:
+    //1. add to favourites
+    //2. remove from favourites
+    //3. get favourites
+    //no more ore less.
+    suspend fun addToFavourites(
+        latitude: Double,
+        longitude: Double,
+        language: String,
+    ): Result<Unit> {
+        try {
+            val response = weatherRemoteDataSource.getSingleWeather(latitude, longitude, language)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    try {
+                        weatherLocalDataSource.insertWeatherFavourite(body.toFavouritesEntity())
+                        return Result.success(Unit)
+                    } catch (e: Exception) {
+                        return Result.failure(e)
+                    }
+                } else {
+                    return Result.failure(Exception("Weather data is empty"))
+                }
+
+            } else {
+                return Result.failure(Exception("Server Error Occurred, Try Again Later "))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return Result.failure(e)
+        }
+    }
+
+
+    fun getFavourites(
+        targetTempUnit: String,
+        targetWindUnit: String
+    ): Flow<List<FavouriteWeatherModel>> {
+
+        return weatherLocalDataSource.getAllFavourites()
+            .map { entityList ->
+                entityList.map { entity ->
+                    entity.toFavouriteWeatherModel(targetTempUnit, targetWindUnit)
+                }
+            }
+    }
+
+    suspend fun deleteFavourite(
+        favouriteWeatherModel: FavouriteWeatherModel
+    ): Result<Unit> {
+        try {
+            weatherLocalDataSource.deleteWeatherFavourites(favouriteWeatherModel.toFavouritesEntity())
+            return Result.success(Unit)
+        } catch (e: Exception) {
+            return Result.failure(e)
         }
     }
 

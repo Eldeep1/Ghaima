@@ -11,7 +11,7 @@ interface WeatherForecastDao {
     @Query("SELECT * FROM weather")
     suspend fun getWeatherForecast(): WeatherForecastEntity
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeatherForecast(weatherForecast: WeatherForecastEntity)
 
 }

@@ -11,11 +11,11 @@ data class FavouritesEntity(
     val latt: Double,
     val long: Double,
     val dateAndTime: String,
-    val temperature: String,
+    val temperature: Double,
     val description: String,
     val iconResId: Int,
     val humidity: String,
-    val windSpeed: String,
+    val windSpeed: Double,
     val pressure: String,
     val cloudCover: String
 )
