@@ -7,16 +7,20 @@ import androidx.room.TypeConverters
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsDao
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsEntity
 import com.depogramming.ghaima.data.weather.datasource.local.WeatherConverters
-import com.depogramming.ghaima.data.weather.datasource.local.WeatherForecastDao
-import com.depogramming.ghaima.data.weather.datasource.local.WeatherForecastEntity
+import com.depogramming.ghaima.data.weather.datasource.local.dao.FavouritesDao
+import com.depogramming.ghaima.data.weather.datasource.local.dao.WeatherForecastDao
+import com.depogramming.ghaima.data.weather.datasource.local.entity.FavouritesEntity
+import com.depogramming.ghaima.data.weather.datasource.local.entity.WeatherForecastEntity
 
 
-@Database(entities = [UserSettingsEntity::class, WeatherForecastEntity::class], version = 3,exportSchema = false)
+@Database(entities = [UserSettingsEntity::class, WeatherForecastEntity::class, FavouritesEntity::class], version = 3,exportSchema = false)
 @TypeConverters(WeatherConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userSettingsDao(): UserSettingsDao
 
     abstract fun weatherForecastDao(): WeatherForecastDao
+
+    abstract fun favouritesDao(): FavouritesDao
 
     companion object {
         @Volatile
