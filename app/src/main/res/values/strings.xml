@@ -46,5 +46,7 @@
     <string name="arabic">Arabic</string>
     <string name="location">Location</string>
     <string name="update_location">Update Location</string>
+    <string name="no_saved_locations">No Saved Locations</string>
+    <string name="saved_locations">Saved Locations</string>
 
 </resources>

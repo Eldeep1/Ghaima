@@ -1,18 +1,290 @@
 package com.depogramming.ghaima.presentation.savedlocations.view
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.depogramming.ghaima.R
+import com.depogramming.ghaima.data.weather.model.FavouriteWeatherModel
+import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocationsViewModel
+import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedStates
+import com.depogramming.ghaima.presentation.utils.LocationBottomSheetContent
+import com.depogramming.ghaima.presentation.utils.location.LocationPermissionHandler
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SavedLocationsUI(
+    modifier: Modifier = Modifier,
+    viewModel: SavedLocationsViewModel,
+    onMapClick: () -> Unit
+) {
+    val favStates by viewModel.favouritesState.collectAsState()
+    val sheetState = rememberModalBottomSheetState()
+    var showLocationSheet by remember { mutableStateOf(false) }
+
+    LocationPermissionHandler(
+        askForPermissionFlow = viewModel.askForPermission,
+        openSettingsFlow = viewModel.openLocationSettingsEvent,
+        onPermissionResult = { fine, coarse -> viewModel.onLocationPermissionResult(fine, coarse) }
+    )
+
+    Scaffold(
+        modifier = modifier
+            .fillMaxSize(),
+        containerColor = Color.Transparent,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    showLocationSheet = true
+                },
+                containerColor = Color(0xff8BA6CF),
+                contentColor = Color.White
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add new saved location"
+                )
+            }
+        }
+    ) { innerFabPadding ->
+
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+        ) {
+            CustomAppBar()
+            Spacer(Modifier.height(32.dp))
+
+            when (favStates) {
+                SavedStates.Error -> ErrorScreen()
+                SavedStates.Loading -> LoadingScreen()
+                is SavedStates.Success -> {
+                    val data = (favStates as SavedStates.Success).data
+                    FavouritesList(favourites = data)
+                }
+
+                SavedStates.EmptyList -> EmptyScreen()
+            }
+
+        }
+    }
+    if (showLocationSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showLocationSheet = false
+            },
+            sheetState = sheetState,
+            containerColor = Color(0xff223B63)
+        ) {
+
+            LocationBottomSheetContent(
+                onCurrentLocationClick = {
+                    showLocationSheet = false
+                    viewModel.fetchCurrentLocation()
+                },
+                onMapClick = {
+                    showLocationSheet = false
+                    onMapClick()
+                }
+            )
+        }
+    }
+}
 
 @Composable
-fun SavedLocationsUI(modifier: Modifier=Modifier){
+fun LoadingScreen() {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("The Saved Locationsss")
+        CircularProgressIndicator(
+            color = Color.White
+        )
+    }
+}
+
+@Composable
+fun ErrorScreen() {
+
+}
+
+@Composable
+fun EmptyScreen() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.no_saved_locations),
+            color = Color.White.copy(alpha=.8f),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Normal
+        )
+    }
+}
+
+@Composable
+fun CustomAppBar(modifier:Modifier=Modifier) {
+    Spacer(Modifier.height(48.dp))
+    Text(
+        modifier=modifier.fillMaxWidth(),
+        text = stringResource(R.string.saved_locations),
+        color = Color.White,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.ExtraBold,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun FavouritesList(modifier: Modifier = Modifier, favourites: List<FavouriteWeatherModel>) {
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        items(favourites) { favourite ->
+            CardItem(favourite = favourite) {
+                println(favourite.cityName)
+            }
+        }
+    }
+}
+@Composable
+fun CardItem(
+    modifier: Modifier = Modifier,
+    favourite: FavouriteWeatherModel,
+    onClicked: () -> Unit
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.2f),
+                        Color.White.copy(alpha = 0.05f)
+                    )
+                )
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.5f),
+                        Color.Transparent,
+                        Color.White.copy(alpha = 0.1f)
+                    )
+                ),
+                shape = RoundedCornerShape(20.dp)
+            ),
+        shape = RoundedCornerShape(20.dp),
+        color = Color.White.copy(alpha = 0.2f),
+        onClick = onClicked
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 16.dp)
+            ) {
+                Text(
+                    text = favourite.dateAndTime,
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = favourite.cityName,
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = favourite.description,
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = favourite.iconResId),
+                    contentDescription = favourite.description,
+                    modifier = Modifier.size(48.dp) // Scaled up slightly to balance the large temp text
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = favourite.temperature,
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+        }
     }
 }

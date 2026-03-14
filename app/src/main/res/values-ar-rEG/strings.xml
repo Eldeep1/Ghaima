@@ -47,4 +47,6 @@
     <string name="arabic">العربية</string>
     <string name="location">الموقع</string>
     <string name="update_location">تحديث الموقع</string>
+    <string name="no_saved_locations">لا يوجد مواقع محفوظة</string>
+    <string name="saved_locations">المواقع المحفوظه</string>
 </resources>

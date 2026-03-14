@@ -51,6 +51,8 @@ import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionV
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.savedlocations.view.SavedLocationsUI
+import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocationsViewModel
+import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocationsViewModelFactory
 import com.depogramming.ghaima.presentation.settings.view.SettingsUI
 import com.depogramming.ghaima.presentation.settings.viewmodel.SettingsViewModel
 import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
@@ -254,7 +256,20 @@ fun GhaimaApp(navController: NavHostController) {
                         HomeScreenUI(modifier = Modifier.padding(innerPadding),homeScreenViewModel)
                     }
                     composable<MainScreens.SavedLocations> {
-                        SavedLocationsUI(modifier = Modifier.padding(innerPadding))
+                        val savedLocationsViewModel: SavedLocationsViewModel = viewModel(
+                            factory = SavedLocationsViewModelFactory(
+                                weatherRepository,
+                                userSettingsRepo,
+                                locationHelper = LocationHelper(LocalActivity.current?.application ?: Application())
+                            )
+                        )
+                        SavedLocationsUI(
+                            modifier = Modifier.padding(innerPadding),
+                            viewModel=savedLocationsViewModel,
+                            onMapClick = {
+                                navController.navigate(MapSelectionScreen)
+                            }
+                            )
                     }
                     composable<MainScreens.Alarms> {
                         AlarmsUI(modifier = Modifier.padding(innerPadding))
