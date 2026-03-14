@@ -1,8 +1,7 @@
 package com.depogramming.ghaima.presentation.settings.view
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,17 +15,25 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Map
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,10 +46,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.views.utils.SettingsSelectionCard
 import com.depogramming.ghaima.presentation.settings.viewmodel.SettingsViewModel
+import com.depogramming.ghaima.presentation.utils.location.LocationPermissionHandler
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsUI(modifier: Modifier = Modifier, viewModel: SettingsViewModel) {
     val scrollState = rememberScrollState()
+    val sheetState = rememberModalBottomSheetState()
+    var showLocationSheet by remember { mutableStateOf(false) }
+
+    LocationPermissionHandler(
+        askForPermissionFlow = viewModel.askForPermission,
+        openSettingsFlow = viewModel.openLocationSettingsEvent,
+        onPermissionResult = { fine, coarse -> viewModel.onLocationPermissionResult(fine, coarse) }
+    )
 
     Column(
         modifier = modifier
@@ -64,9 +81,29 @@ fun SettingsUI(modifier: Modifier = Modifier, viewModel: SettingsViewModel) {
         WindSpeedDropDown(viewModel)
         Spacer(Modifier.height(8.dp))
 
-        SelectLocationButton(viewModel)
+        SelectLocationButton(viewModel){
+            showLocationSheet=true
+        }
         Spacer(Modifier.height(16.dp))
+        if (showLocationSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showLocationSheet = false },
+                sheetState = sheetState,
+                containerColor = Color(0xff223B63)
+            ) {
 
+                LocationBottomSheetContent(
+                    onCurrentLocationClick = {
+                        showLocationSheet = false
+                        viewModel.fetchCurrentLocation()
+                    },
+                    onMapClick = {
+                        showLocationSheet = false
+//                        onNavigateToMap()
+                    }
+                )
+            }
+        }
 
     }
 }
@@ -120,12 +157,16 @@ fun WindSpeedDropDown(viewModel: SettingsViewModel) {
 }
 
 @Composable
-fun SelectLocationButton(viewModel: SettingsViewModel,modifier: Modifier= Modifier) {
+fun SelectLocationButton(viewModel: SettingsViewModel,modifier: Modifier= Modifier,onClicked:()->Unit) {
+    val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
+
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         color  =  Color.White.copy(alpha = .2f),
-        onClick = {}
+        onClick = {
+            onClicked()
+        }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 32.dp).height(56.dp),
@@ -140,7 +181,7 @@ fun SelectLocationButton(viewModel: SettingsViewModel,modifier: Modifier= Modifi
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text="Cairo, Egypt, Africa",
+                text=userLocation.place,
                 modifier=Modifier.width(100.dp),
                 color=Color.White.copy(alpha=.4f),
                 fontSize = 14.sp,
@@ -155,6 +196,86 @@ fun SelectLocationButton(viewModel: SettingsViewModel,modifier: Modifier= Modifi
                 contentDescription = null,
                 modifier=Modifier.size(16.dp),
                 tint = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+fun LocationBottomSheetContent(
+    onCurrentLocationClick: () -> Unit,
+    onMapClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        Color(0xff223B63),
+                        MaterialTheme.colorScheme.secondary,
+                    )
+                )
+            )
+            .padding(bottom = 48.dp, start = 24.dp, end = 24.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.update_location),
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+
+        Button(
+            onClick = onCurrentLocationClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp), // A nice, tall touch target
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White.copy(alpha = 0.15f), // Matches your glassmorphism theme
+                contentColor = Color.White
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.location_ic),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = stringResource(R.string.use_my_current_location),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = onMapClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White.copy(alpha = 0.15f),
+                contentColor = Color.White
+            ),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Map,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = stringResource(R.string.select_location_on_map),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f)
             )
         }
     }

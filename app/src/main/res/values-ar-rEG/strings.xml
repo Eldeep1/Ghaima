@@ -46,4 +46,5 @@
     <string name="english">الإنجليزية</string>
     <string name="arabic">العربية</string>
     <string name="location">الموقع</string>
+    <string name="update_location">تحديث الموقع</string>
 </resources>

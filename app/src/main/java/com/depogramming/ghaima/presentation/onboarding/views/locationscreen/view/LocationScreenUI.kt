@@ -1,10 +1,5 @@
 package com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view
 
-import android.Manifest
-import android.provider.Settings
-import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,16 +29,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
+import com.depogramming.ghaima.presentation.utils.location.LocationPermissionHandler
 
 
 @Composable
@@ -54,33 +48,11 @@ fun LocationScreenUI(
     onMapSelectionButtonClick:()->Unit,
     ) {
 
-
-    val locationPermissionsLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissionsMap ->
-        val fineLocationGranted = permissionsMap[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-        val coarseLocationGranted = permissionsMap[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-
-        viewModel.onLocationPermissionResult(fineLocationGranted, coarseLocationGranted)
-    }
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        viewModel.askForPermission.collect {
-            locationPermissionsLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
-    }
-    LaunchedEffect(Unit) {
-        viewModel.openLocationSettingsEvent.collect {
-            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            context.startActivity(intent)
-        }
-    }
+    LocationPermissionHandler(
+        askForPermissionFlow = viewModel.askForPermission,
+        openSettingsFlow = viewModel.openLocationSettingsEvent,
+        onPermissionResult = { fine, coarse -> viewModel.onLocationPermissionResult(fine, coarse) }
+    )
 
     Column(
         modifier = modifier

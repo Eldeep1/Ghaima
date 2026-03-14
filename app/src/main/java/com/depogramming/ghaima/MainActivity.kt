@@ -266,7 +266,8 @@ fun GhaimaApp(navController: NavHostController) {
                         val settingsScreenViewModel: SettingsViewModel = viewModel(
                             factory = SettingsViewModel.SettingsViewModelFactory(
                                 userSettingsRepo,
-                            )
+                                locationHelper = LocationHelper(LocalActivity.current?.application ?: Application())
+                                )
                         )
                         SettingsUI(modifier = Modifier.padding(innerPadding),settingsScreenViewModel)
                     }
