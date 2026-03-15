@@ -91,7 +91,8 @@ class SavedLocationsViewModel(
             weatherRepository.addToFavourites(
                 location.latitude,
                 location.longitude,
-                userSettings?.languageCode?:"en"
+                userSettings?.languageCode?:"en",
+                location.place
             )
         }
     }

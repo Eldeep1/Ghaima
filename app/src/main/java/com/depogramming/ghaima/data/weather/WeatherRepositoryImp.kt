@@ -56,6 +56,7 @@ class WeatherRepositoryImpl(
         latitude: Double,
         longitude: Double,
         language: String,
+        place:String?=null,
     ): Result<Unit> {
         try {
             val response = weatherRemoteDataSource.getSingleWeather(latitude, longitude, language)
@@ -63,7 +64,9 @@ class WeatherRepositoryImpl(
                 val body = response.body()
                 if (body != null) {
                     try {
-                        weatherLocalDataSource.insertWeatherFavourite(body.toFavouritesEntity())
+                        weatherLocalDataSource.insertWeatherFavourite(body.toFavouritesEntity(
+                            place = place
+                        ))
                         return Result.success(Unit)
                     } catch (e: Exception) {
                         return Result.failure(e)

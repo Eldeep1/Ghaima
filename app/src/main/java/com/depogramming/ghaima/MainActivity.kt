@@ -29,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.depogramming.ghaima.data.db.AppDatabase
 import com.depogramming.ghaima.data.network.Network
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
@@ -46,8 +47,9 @@ import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewM
 import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view.LocationScreenUI
 import com.depogramming.ghaima.presentation.mapselection.view.MapSelectionScreenUI
+import com.depogramming.ghaima.presentation.mapselection.viewmodel.CurrentMapSelectionViewModelFactory
+import com.depogramming.ghaima.presentation.mapselection.viewmodel.FavouriteMapSelectionViewModelFactory
 import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModel
-import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.savedlocations.view.SavedLocationsUI
@@ -222,19 +224,35 @@ fun GhaimaApp(navController: NavHostController) {
                         }
                     }
                 }
-                composable<MapSelectionScreen> {
-                    val parentEntry = remember(it) {
+                composable<MapSelectionScreen> {backStackEntry ->
+
+                    val routeData = backStackEntry.toRoute<MapSelectionScreen>()
+                    val isFavourites = routeData.isFavourite
+
+                    val parentEntry = remember(backStackEntry) {
                         navController.getBackStackEntry<MapSelectionScreen>()
                     }
-                    //create the view model
-                    val mapSelectionViewModel: MapSelectionViewModel = viewModel(
-                        viewModelStoreOwner = parentEntry,
-                        factory = MapSelectionViewModelFactory(
-                            userSettingsRepo,
-                            weatherRepository,
-                            LocationHelper(LocalActivity.current?.application ?: Application())
+                    var mapSelectionViewModel: MapSelectionViewModel
+                    if (isFavourites) {
+                        mapSelectionViewModel= viewModel(
+                            viewModelStoreOwner = parentEntry,
+                            factory = FavouriteMapSelectionViewModelFactory(
+                                userSettingsRepo,
+                                weatherRepository,
+                                LocationHelper(LocalActivity.current?.application ?: Application())
+                            )
                         )
-                    )
+                    }
+                    else{
+                        mapSelectionViewModel= viewModel(
+                            viewModelStoreOwner = parentEntry,
+                            factory = CurrentMapSelectionViewModelFactory(
+                                userSettingsRepo,
+                                weatherRepository,
+                                LocationHelper(LocalActivity.current?.application ?: Application())
+                            )
+                        )
+                    }
                     MapSelectionScreenUI(
                         modifier = Modifier.padding(innerPadding),
                         mapSelectionViewModel,
@@ -267,7 +285,7 @@ fun GhaimaApp(navController: NavHostController) {
                             modifier = Modifier.padding(innerPadding),
                             viewModel=savedLocationsViewModel,
                             onMapClick = {
-                                navController.navigate(MapSelectionScreen)
+                                navController.navigate(MapSelectionScreen(isFavourite = true))
                             }
                             )
                     }

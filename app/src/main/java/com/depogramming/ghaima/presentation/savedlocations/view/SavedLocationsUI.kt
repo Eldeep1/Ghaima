@@ -201,14 +201,13 @@ fun FavouritesList(
     LazyColumn(
         modifier = modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(favourites) { favourite ->
             CardItem(favourite = favourite, onDelete = {
                 onDelete(favourite)
-            }) {
-                println(favourite.cityName)
-            }
+            }) {}
         }
     }
 }

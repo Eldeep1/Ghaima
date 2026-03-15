@@ -2,12 +2,10 @@ package com.depogramming.ghaima.presentation.mapselection.viewmodel
 
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.depogramming.ghaima.data.weather.datasource.remote.dto.CountriesListDTO
 import com.depogramming.ghaima.data.weather.model.LocationModel
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
-import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
 import com.depogramming.ghaima.presentation.utils.location.LocationHelper
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,14 +14,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 
-class MapSelectionViewModel(
+abstract class MapSelectionViewModel(
     val userSettingsRepository: UserSettingsRepo,
     val weatherRepository: WeatherRepositoryImpl,
-    private val locationHelper: LocationHelper
+    val locationHelper: LocationHelper
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -32,7 +29,7 @@ class MapSelectionViewModel(
 
     private val _searchResults = MutableStateFlow<List<CountriesListDTO>>(emptyList())
     val searchResults = _searchResults.asStateFlow()
-    private val _selectedLocation =
+    val _selectedLocation =
         MutableStateFlow(LocationModel(30.0444, 31.2357, "Cairo, Egypt"))
     val selectedLocation = _selectedLocation.asStateFlow()
 
@@ -77,20 +74,7 @@ class MapSelectionViewModel(
         )
     }
 
-    suspend fun onSubmitButtonClick() {
-            val currentSettings = userSettingsRepository.getUserData().firstOrNull()
-                ?: UserSettingsModel(null, null, null,null)
-
-            val newSettings = currentSettings.copy(
-                location = LocationModel(
-                    _selectedLocation.value.latitude,
-                    _selectedLocation.value.longitude,
-                    _selectedLocation.value.place
-                )
-            )
-
-            userSettingsRepository.setUserSettings(newSettings)
-    }
+    abstract suspend fun onSubmitButtonClick()
 
 
     fun updateLocationFromMap(lat: Double, lng: Double) {
@@ -104,16 +88,5 @@ class MapSelectionViewModel(
                 place = addressName
             )
         }
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class MapSelectionViewModelFactory(
-    val userSettingsRepository: UserSettingsRepo,
-    val weatherRepository: WeatherRepositoryImpl,
-    private val locationHelper: LocationHelper
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MapSelectionViewModel(userSettingsRepository, weatherRepository, locationHelper) as T
     }
 }

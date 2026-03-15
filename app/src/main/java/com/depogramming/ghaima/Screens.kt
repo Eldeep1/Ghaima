@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 object SplashScreen
 @Serializable
-object MapSelectionScreen
+data class MapSelectionScreen(val isFavourite:Boolean=false)
 // 2. The route that represents the ENTIRE Onboarding Graph
 @Serializable
 object OnboardingGraph

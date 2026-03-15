@@ -44,12 +44,12 @@ fun SingleWeatherDTO.toFavouriteWeatherModel(
     )
 }
 
-fun SingleWeatherDTO.toFavouritesEntity(): FavouritesEntity {
+fun SingleWeatherDTO.toFavouritesEntity(place: String?=null): FavouritesEntity {
 
     val weatherInfo = this.weather.firstOrNull()
 
     return FavouritesEntity(
-        cityName = this.name,
+        cityName = if (!place.isNullOrBlank()) place else this.name,
         latt = this.coord.lat,
         long = this.coord.lon,
 
