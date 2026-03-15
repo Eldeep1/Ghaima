@@ -48,5 +48,9 @@
     <string name="update_location">Update Location</string>
     <string name="no_saved_locations">No Saved Locations</string>
     <string name="saved_locations">Saved Locations</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="are_you_sure_you_want_to_delete_from_you_saved_locations">Are you sure you want to delete %1$s from you saved locations?</string>
+    <string name="delete_location">Delete Location?</string>
 
 </resources>

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
+import com.depogramming.ghaima.data.weather.model.FavouriteWeatherModel
 import com.depogramming.ghaima.data.weather.model.LocationModel
 import com.depogramming.ghaima.presentation.utils.TemperatureUnit
 import com.depogramming.ghaima.presentation.utils.WindSpeedUnit
@@ -92,6 +93,12 @@ class SavedLocationsViewModel(
                 location.longitude,
                 userSettings?.languageCode?:"en"
             )
+        }
+    }
+
+    fun deleteFavourite(favourite: FavouriteWeatherModel) {
+        viewModelScope.launch {
+            weatherRepository.deleteFavourite(favourite)
         }
     }
 }

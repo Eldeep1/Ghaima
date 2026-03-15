@@ -49,4 +49,8 @@
     <string name="update_location">تحديث الموقع</string>
     <string name="no_saved_locations">لا يوجد مواقع محفوظة</string>
     <string name="saved_locations">المواقع المحفوظه</string>
+    <string name="delete">حذف</string>
+    <string name="cancel">إلغاء</string>
+    <string name="are_you_sure_you_want_to_delete_from_you_saved_locations">هل أنت متأكد أنك تريد حذف %1$s من مواقعك المحفوظة؟</string>
+    <string name="delete_location">حذف الموقع؟</string>
 </resources>
