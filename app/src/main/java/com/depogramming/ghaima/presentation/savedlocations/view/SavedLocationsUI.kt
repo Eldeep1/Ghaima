@@ -13,14 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -53,11 +50,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.data.weather.model.FavouriteWeatherModel
 import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocationsViewModel
 import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedStates
+import com.depogramming.ghaima.presentation.utils.CustomConfirmDialog
 import com.depogramming.ghaima.presentation.utils.LocationBottomSheetContent
 import com.depogramming.ghaima.presentation.utils.location.LocationPermissionHandler
 import kotlinx.coroutines.launch
@@ -98,7 +95,7 @@ fun SavedLocationsUI(
             }
         }
     ) { innerFabPadding ->
-
+        println(innerFabPadding)
         Column(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
@@ -225,78 +222,22 @@ fun CardItem(
         initialValue = SwipeToDismissBoxValue.Settled
     )
     if (showDeleteDialog) {
-        Dialog(
-            onDismissRequest = {
+        CustomConfirmDialog(
+            title = stringResource(R.string.delete_location),
+            message = stringResource(
+                R.string.are_you_sure_you_want_to_delete_from_you_saved_locations,
+                favourite.cityName
+            ),
+            onDismiss = {
                 showDeleteDialog = false
-                coroutineScope.launch { dismissState.reset() }
+                coroutineScope.launch { dismissState.reset() } // Snap back!
+            },
+            onConfirm = {
+                showDeleteDialog = false
+                onDelete(favourite)
             }
-        ) {
-
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                shape = RoundedCornerShape(24.dp),
-                color = Color(0xff8BA6CF),
-                tonalElevation = 8.dp
-            ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    Text(
-                        text = stringResource(R.string.delete_location),
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = stringResource(
-                            R.string.are_you_sure_you_want_to_delete_from_you_saved_locations,
-                            favourite.cityName
-                        ),
-                        color = Color.White.copy(alpha = .8f),
-                        fontSize = 16.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Button(
-                            onClick = {
-                                showDeleteDialog = false
-                                coroutineScope.launch { dismissState.reset() } // Snap back!
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray)
-                        ) {
-                            Text(stringResource(R.string.cancel))
-                        }
-                        Button(
-                            onClick = {
-                                showDeleteDialog = false
-                                onDelete(favourite)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Red.copy(
-                                    alpha = .7f
-                                )
-                            )
-                        ) {
-                            Text(stringResource(R.string.delete))
-                        }
-                    }
-                }
-            }
-        }
+        )
     }
-
     LaunchedEffect(dismissState.currentValue) {
         if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
             showDeleteDialog = true

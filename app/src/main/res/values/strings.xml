@@ -52,5 +52,36 @@
     <string name="cancel">Cancel</string>
     <string name="are_you_sure_you_want_to_delete_from_you_saved_locations">Are you sure you want to delete %1$s from you saved locations?</string>
     <string name="delete_location">Delete Location?</string>
+    <string name="alerts">Alerts</string>
+    <string name="new_alert">New Alert</string>
+    <string name="notification">Notification</string>
+    <string name="alarm">Alarm</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="pm">PM</string>
+    <string name="am">AM</string>
+    <string name="description">DESCRIPTION</string>
+    <string name="e_g_ice_warning_on_commute">e.g., Ice warning on commute</string>
+    <string name="temp_range">TEMP RANGE</string>
+    <string name="create_alert">Create Alert</string>
+    <string name="ok">OK</string>
+    <string name="select_time">Select Time</string>
+    <string name="temperature_is_currently_c">Temperature is currently %1$d°C</string>
+    <string name="weather_notification">Weather Notification</string>
+    <string name="weather_alarm">Weather Alarm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="time_window_must_be_at_least_1_hour">Time window must be at least 1 hour</string>
+    <string name="alert_saved_successfully">Alert saved successfully</string>
+    <string name="failed_to_save_alert_please_try_again">Failed to save alert. Please try again.</string>
+    <string name="alert">Alert %1$s</string>
+    <string name="disabled">disabled</string>
+    <string name="enabled">enabled</string>
+    <string name="failed_to_update_status">Failed to update status</string>
+    <string name="no_alerts_configured_tap_to_create_one">No alerts configured.\nTap + to create one.</string>
+    <string name="alert_deleted">Alert deleted</string>
+    <string name="could_not_delete_alert">Could not delete alert</string>
+    <string name="no_description">No description</string>
+    <string name="delete_alarm">Delete Alarm</string>
+    <string name="are_you_sure_you_want_to_delete_the_alarm_for">Are you sure you want to delete the alarm?</string>
 
 </resources>
