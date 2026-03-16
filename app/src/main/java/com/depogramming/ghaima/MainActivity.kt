@@ -30,6 +30,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.depogramming.ghaima.data.alerts.datasource.local.AlertsLocalDataSource
+import com.depogramming.ghaima.data.alerts.repository.AlertsRepositoryImpl
 import com.depogramming.ghaima.data.db.AppDatabase
 import com.depogramming.ghaima.data.network.Network
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
@@ -37,7 +39,10 @@ import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLo
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
 import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
 import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSource
-import com.depogramming.ghaima.presentation.alarms.view.AlarmsUI
+import com.depogramming.ghaima.presentation.alarms.view.AlarmsScreenUI
+import com.depogramming.ghaima.presentation.alarms.viewmodel.AlarmsViewModel
+import com.depogramming.ghaima.presentation.alarms.viewmodel.AlarmsViewModelFactory
+import com.depogramming.ghaima.worker.BackgroundScheduler
 import com.depogramming.ghaima.presentation.home.view.HomeScreenUI
 import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModel
 import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModelFactory
@@ -69,12 +74,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         enableEdgeToEdge()
+        BackgroundScheduler.schedulePeriodicChecks(this)
         setContent {
             val navController = rememberNavController()
             GhaimaTheme {
                 GhaimaApp(navController = navController)
             }
         }
+
+
     }
 }
 
@@ -290,7 +298,14 @@ fun GhaimaApp(navController: NavHostController) {
                             )
                     }
                     composable<MainScreens.Alarms> {
-                        AlarmsUI(modifier = Modifier.padding(innerPadding))
+                        val alertsLocalDataSource= AlertsLocalDataSource(AppDatabase.getInstance(LocalContext.current).alertsDao())
+                        val alertsRepository= AlertsRepositoryImpl(alertsLocalDataSource)
+                        val alarmsViewModel: AlarmsViewModel = viewModel(
+                            factory = AlarmsViewModelFactory(
+                                alertsRepository = alertsRepository
+                            )
+                        )
+                        AlarmsScreenUI(modifier = Modifier.padding(innerPadding), viewModel = alarmsViewModel)
                     }
                     composable<MainScreens.Settings> {
                         val settingsScreenViewModel: SettingsViewModel = viewModel(
