@@ -10,21 +10,20 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.data.alerts.datasource.local.AlertsLocalDataSource
 import com.depogramming.ghaima.data.alerts.model.ExactAlarmAlert
-import com.depogramming.ghaima.data.alerts.repository.AlertsRepositoryImpl
-import com.depogramming.ghaima.data.db.AppDatabase
+import com.depogramming.ghaima.data.alerts.repository.AlertsRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class ExactAlarmReceiver : BroadcastReceiver() {
-
+class ExactAlarmReceiver : BroadcastReceiver(), KoinComponent {
+    private val alertsRepo: AlertsRepo by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
         val pendingResult = goAsync()
         val alarmId = intent.getIntExtra("ALARM_ID", -1)
-        val alertsRepo = AlertsRepositoryImpl(AlertsLocalDataSource(AppDatabase.getInstance(context).alertsDao()))
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -33,8 +32,10 @@ class ExactAlarmReceiver : BroadcastReceiver() {
 
                     if (activeAlert != null && activeAlert is ExactAlarmAlert) {
 
-                        showSystemAlarm(context,
-                            context.getString(R.string.weather_alarm), activeAlert.description)
+                        showSystemAlarm(
+                            context,
+                            context.getString(R.string.weather_alarm), activeAlert.description
+                        )
 
                         val turnedOffAlert = activeAlert.copy(isActive = false)
                         alertsRepo.insertAlert(turnedOffAlert)

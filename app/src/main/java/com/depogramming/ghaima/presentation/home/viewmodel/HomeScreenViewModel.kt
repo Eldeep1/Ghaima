@@ -1,11 +1,10 @@
 package com.depogramming.ghaima.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
-import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
+import com.depogramming.ghaima.data.weather.WeatherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
-    private val weatherRepository: WeatherRepositoryImpl,
+    private val weatherRepository: WeatherRepository,
     private val userSettingsRepo: UserSettingsRepo
 ) : ViewModel() {
 
@@ -72,15 +71,5 @@ class HomeScreenViewModel(
     override fun onCleared() {
         super.onCleared()
         println("did it really cleared??????")
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class HomeScreenViewModelFactory(
-    private val weatherRepository: WeatherRepositoryImpl,
-    private val userSettingsRepo: UserSettingsRepo
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return HomeScreenViewModel(weatherRepository, userSettingsRepo) as T
     }
 }

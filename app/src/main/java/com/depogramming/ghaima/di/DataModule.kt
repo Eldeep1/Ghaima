@@ -1,6 +1,7 @@
 package com.depogramming.ghaima.di
 
 import androidx.room.Room
+import androidx.work.WorkerParameters
 import com.depogramming.ghaima.BuildConfig
 import com.depogramming.ghaima.data.alerts.datasource.local.AlertsLocalDataSource
 import com.depogramming.ghaima.data.alerts.repository.AlertsRepo
@@ -24,9 +25,11 @@ import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocati
 import com.depogramming.ghaima.presentation.settings.viewmodel.SettingsViewModel
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModel
 import com.depogramming.ghaima.presentation.utils.location.LocationHelper
+import com.depogramming.ghaima.worker.WeatherAlertWorker
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -126,6 +129,15 @@ val dataModule = module {
     }
     viewModel<SplashScreenViewModel> {
         SplashScreenViewModel(get())
+    }
+
+    worker { (workerParams: WorkerParameters) ->
+        WeatherAlertWorker(
+            context = get(),
+            workerParams = workerParams,
+            alertsRepository = get(),
+            weatherRepo = get()
+        )
     }
 }
 

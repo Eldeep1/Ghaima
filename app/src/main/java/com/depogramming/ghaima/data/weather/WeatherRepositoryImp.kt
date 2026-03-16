@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.map
 class WeatherRepositoryImpl(
     private val weatherRemoteDataSource: WeatherRemoteDataSource,
     private val weatherLocalDataSource: WeatherLocalDataSource,
-) {
+) : WeatherRepository {
 
-    suspend fun searchCity(query: String): Result<List<CountriesListDTO>> {
+    override suspend fun searchCity(query: String): Result<List<CountriesListDTO>> {
 
         return try {
             val response = weatherRemoteDataSource.searchCity(query)
@@ -52,11 +52,11 @@ class WeatherRepositoryImpl(
     //2. remove from favourites
     //3. get favourites
     //no more ore less.
-    suspend fun addToFavourites(
+    override suspend fun addToFavourites(
         latitude: Double,
         longitude: Double,
         language: String,
-        place:String?=null,
+        place:String?,
     ): Result<Unit> {
         try {
             val response = weatherRemoteDataSource.getSingleWeather(latitude, longitude, language)
@@ -85,7 +85,7 @@ class WeatherRepositoryImpl(
     }
 
 
-    fun getFavourites(
+    override fun getFavourites(
         targetTempUnit: String,
         targetWindUnit: String
     ): Flow<List<FavouriteWeatherModel>> {
@@ -98,7 +98,7 @@ class WeatherRepositoryImpl(
             }
     }
 
-    suspend fun deleteFavourite(
+    override suspend fun deleteFavourite(
         favouriteWeatherModel: FavouriteWeatherModel
     ): Result<Unit> {
         try {
@@ -109,7 +109,7 @@ class WeatherRepositoryImpl(
         }
     }
 
-    suspend fun getWeatherForecast(
+    override suspend fun getWeatherForecast(
         latitude: Double,
         longitude: Double,
         language: String,
@@ -164,12 +164,12 @@ class WeatherRepositoryImpl(
         }
     }
 
-    suspend fun getLocalWeatherForecast(): WeatherForecastModel {
+    override suspend fun getLocalWeatherForecast(): WeatherForecastModel {
         val localData = weatherLocalDataSource.getWeatherForecast()
         return localData.toWeatherForecastModel()
     }
 
-    suspend fun insertWeatherForecast(weatherForecastModel: WeatherForecastModel) {
+    override suspend fun insertWeatherForecast(weatherForecastModel: WeatherForecastModel) {
         val entity = weatherForecastModel.toEntity()
         weatherLocalDataSource.insertWeatherForecast(entity)
     }

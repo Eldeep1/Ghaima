@@ -1,11 +1,10 @@
 package com.depogramming.ghaima.presentation.savedlocations.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
 import com.depogramming.ghaima.data.usersettings.model.UserSettingsModel
-import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
+import com.depogramming.ghaima.data.weather.WeatherRepository
 import com.depogramming.ghaima.data.weather.model.FavouriteWeatherModel
 import com.depogramming.ghaima.data.weather.model.LocationModel
 import com.depogramming.ghaima.presentation.utils.TemperatureUnit
@@ -22,7 +21,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class SavedLocationsViewModel(
-    private val weatherRepository: WeatherRepositoryImpl,
+    private val weatherRepository: WeatherRepository,
     private val userSettingsRepo: UserSettingsRepo,
     private val locationHelper: LocationHelper
 ) : ViewModel() {
@@ -101,16 +100,5 @@ class SavedLocationsViewModel(
         viewModelScope.launch {
             weatherRepository.deleteFavourite(favourite)
         }
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class SavedLocationsViewModelFactory(
-    private val weatherRepository: WeatherRepositoryImpl,
-    private val userSettingsRepo: UserSettingsRepo,
-    private val locationHelper: LocationHelper,
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SavedLocationsViewModel(weatherRepository, userSettingsRepo,locationHelper) as T
     }
 }
