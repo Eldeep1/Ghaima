@@ -12,12 +12,15 @@ class AlertsLocalDataSource(private val alertsDao: AlertsDao) {
         return alertsDao.getActiveAlertsSync()
     }
 
-    suspend fun insertAlert(alert: AlertEntity) {
-        alertsDao.insertAlert(alert)
+    suspend fun insertAlert(alert: AlertEntity):Long {
+        return alertsDao.insertAlert(alert)
     }
 
     suspend fun deleteAlert(alert: AlertEntity) {
         alertsDao.deleteAlert(alert)
+    }
+    suspend fun getAlertById(id: Int): AlertEntity? {
+        return alertsDao.getAlertById(id)
     }
 
 }

@@ -17,6 +17,10 @@ class AlertsRepositoryImpl(
         }
     }
 
+    override suspend fun getAlertById(alarmId: Int): WeatherAlertModel? {
+        return alertsLocalDataSource.getAlertById(alarmId)?.toModel()
+    }
+
     override suspend fun getActiveAlertsSync(): Result<List<WeatherAlertModel>> {
         return try {
             val entities = alertsLocalDataSource.getActiveAlertsSync()
@@ -26,10 +30,10 @@ class AlertsRepositoryImpl(
         }
     }
 
-    override suspend fun insertAlert(alert: WeatherAlertModel): Result<Unit> {
+    override suspend fun insertAlert(alert: WeatherAlertModel): Result<Long> {
         return try {
-            alertsLocalDataSource.insertAlert(alert.toEntity())
-            Result.success(Unit)
+            val id=alertsLocalDataSource.insertAlert(alert.toEntity())
+            Result.success(id)
         } catch (e: Exception) {
             Result.failure(e)
         }

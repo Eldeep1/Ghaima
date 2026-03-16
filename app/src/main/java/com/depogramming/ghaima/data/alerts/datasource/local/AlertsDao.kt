@@ -18,9 +18,11 @@ interface AlertsDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAlert(alert: AlertEntity)
+    suspend fun insertAlert(alert: AlertEntity):Long
 
     @Delete
     suspend fun deleteAlert(alert: AlertEntity)
 
+    @Query("SELECT * FROM alerts WHERE id = :id LIMIT 1")
+    suspend fun getAlertById(id: Int): AlertEntity?
 }
