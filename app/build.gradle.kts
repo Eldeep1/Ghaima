@@ -102,4 +102,8 @@ dependencies {
     ksp(libs.dagger.compiler)
     implementation(libs.androidx.work.runtime.ktx)
 
+    val koin_android_version = "4.0.1"
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 }
