@@ -53,4 +53,37 @@
     <string name="cancel">إلغاء</string>
     <string name="are_you_sure_you_want_to_delete_from_you_saved_locations">هل أنت متأكد أنك تريد حذف %1$s من مواقعك المحفوظة؟</string>
     <string name="delete_location">حذف الموقع؟</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="new_alert">تنبيه جديد</string>
+    <string name="notification">إشعار</string>
+    <string name="alarm">منبه</string>
+    <string name="from">من</string>
+    <string name="to">إلى</string>
+    <string name="pm">م</string>
+    <string name="am">ص</string>
+    <string name="description">الوصف</string>
+    <string name="e_g_ice_warning_on_commute">مثال: تحذير من الجليد أثناء التنقل</string>
+    <string name="temp_range">نطاق الحرارة</string>
+    <string name="create_alert">إنشاء تنبيه</string>
+    <string name="ok">موافق</string>
+    <string name="select_time">اختر الوقت</string>
+    <string name="temperature_is_currently_c">درجة الحرارة حالياً  %1$d°C</string>
+    <string name="weather_notification">إشعار الطقس</string>
+    <string name="weather_alarm">منبه للطقس</string>
+    <string name="dismiss">إايقاف</string>
+    <string name="time_window_must_be_at_least_1_hour">يجب أن تكون الفترة الزمنية ساعة واحدة على الأقل</string>
+    <string name="alert_saved_successfully">تم حفظ التنبيه بنجاح</string>
+    <string name="failed_to_save_alert_please_try_again">فشل في حفظ التنبيه. يرجى المحاولة مرة أخرى.</string>
+    <string name="alert">التنبيه %1$s</string>
+    <string name="disabled">معطل</string>
+    <string name="enabled">مفعل</string>
+    <string name="failed_to_update_status">فشل في تحديث الحالة</string>
+    <string name="no_alerts_configured_tap_to_create_one">لا توجد تنبيهات مُعدّة.\nاضغط + لإنشاء واحد.</string>
+    <string name="alert_deleted">تم حذف التنبيه</string>
+    <string name="could_not_delete_alert">تعذر حذف التنبيه</string>
+    <string name="no_description">لا يوجود وصف</string>
+    <string name="delete_alarm">حذف المنبه</string>
+    <string name="are_you_sure_you_want_to_delete_the_alarm_for">هل أنت متأكد أنك تريد حذف المنبه؟</string>
+
+
 </resources>

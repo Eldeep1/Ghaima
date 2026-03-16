@@ -146,9 +146,9 @@ class AlarmsViewModel(
                     BackgroundScheduler.cancelExactAlarm(context, alert.id)
                 }
 
-                _uiEvent.emit(AlarmsUiEvent.ShowSnackBar("Alert deleted"))
+                _uiEvent.emit(AlarmsUiEvent.ShowSnackBar(context.getString(R.string.alert_deleted)))
             }.onFailure {
-                _uiEvent.emit(AlarmsUiEvent.ShowSnackBar("Could not delete alert"))
+                _uiEvent.emit(AlarmsUiEvent.ShowSnackBar(context.getString(R.string.could_not_delete_alert)))
             }
         }
     }
