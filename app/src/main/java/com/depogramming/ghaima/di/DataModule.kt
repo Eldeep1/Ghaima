@@ -12,8 +12,8 @@ import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
 import com.depogramming.ghaima.data.weather.WeatherRepository
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
-import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
-import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSource
+import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSourceImp
+import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSourceImpl
 import com.depogramming.ghaima.data.weather.datasource.remote.WeatherService
 import com.depogramming.ghaima.presentation.alarms.viewmodel.AlarmsViewModel
 import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModel
@@ -86,11 +86,11 @@ val dataModule = module {
     factory<UserSettingsLocalDataSource> {
         UserSettingsLocalDataSource(get())
     }
-    factory<WeatherLocalDataSource> {
-        WeatherLocalDataSource(get(), get())
+    factory<WeatherLocalDataSourceImp> {
+        WeatherLocalDataSourceImp(get(), get())
     }
-    factory<WeatherRemoteDataSource> {
-        WeatherRemoteDataSource(get())
+    factory<WeatherRemoteDataSourceImpl> {
+        WeatherRemoteDataSourceImpl(get())
     }
     factory<LocationHelper> {
         LocationHelper(androidApplication())
