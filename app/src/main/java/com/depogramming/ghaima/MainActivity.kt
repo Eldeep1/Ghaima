@@ -216,7 +216,7 @@ fun GhaimaApp(navController: NavHostController) {
                             modifier = Modifier.padding(innerPadding),
                             settingsScreenViewModel,
                             onMapClick = {
-                                navController.navigate(MapSelectionScreen)
+                                navController.navigate(MapSelectionScreen(isFavourite = false))
                             })
                     }
                 }

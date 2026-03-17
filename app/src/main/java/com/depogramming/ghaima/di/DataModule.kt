@@ -12,6 +12,8 @@ import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
 import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
 import com.depogramming.ghaima.data.weather.WeatherRepository
 import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
+import com.depogramming.ghaima.data.weather.datasource.WeatherRemoteDataSource
+import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
 import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSourceImp
 import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSourceImpl
 import com.depogramming.ghaima.data.weather.datasource.remote.WeatherService
@@ -86,10 +88,10 @@ val dataModule = module {
     factory<UserSettingsLocalDataSource> {
         UserSettingsLocalDataSource(get())
     }
-    factory<WeatherLocalDataSourceImp> {
+    factory<WeatherLocalDataSource> {
         WeatherLocalDataSourceImp(get(), get())
     }
-    factory<WeatherRemoteDataSourceImpl> {
+    factory<WeatherRemoteDataSource> {
         WeatherRemoteDataSourceImpl(get())
     }
     factory<LocationHelper> {
@@ -114,10 +116,10 @@ val dataModule = module {
     viewModel<HomeScreenViewModel> {
         HomeScreenViewModel(get(), get())
     }
-    viewModel<MapSelectionViewModel> {
+    viewModel<CurrentLocationMapSelection> {
         CurrentLocationMapSelection(get(), get(), get())
     }
-    viewModel<MapSelectionViewModel> {
+    viewModel<FavouriteLocationMapSelection> {
         FavouriteLocationMapSelection(get(), get(), get())
     }
     viewModel<SavedLocationsViewModel> {
