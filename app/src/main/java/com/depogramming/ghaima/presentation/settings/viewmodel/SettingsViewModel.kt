@@ -127,14 +127,4 @@ class SettingsViewModel(
             }
         }
     }
-
-    @Suppress("UNCHECKED_CAST")
-    class SettingsViewModelFactory(
-        private val userSettingsRepo: UserSettingsRepo,
-        private val locationHelper: LocationHelper
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return SettingsViewModel(userSettingsRepo,locationHelper) as T
-        }
-    }
 }

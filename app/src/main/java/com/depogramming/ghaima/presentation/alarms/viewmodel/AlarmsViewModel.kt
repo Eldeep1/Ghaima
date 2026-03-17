@@ -192,21 +192,13 @@ class AlarmsViewModel(
                     }
                 }
 
-                val status = if (isActive) context.getString(R.string.enabled) else context.getString(R.string.disabled)
+                val status =
+                    if (isActive) context.getString(R.string.enabled) else context.getString(R.string.disabled)
                 _uiEvent.emit(AlarmsUiEvent.ShowSnackBar(context.getString(R.string.alert, status)))
 
             }.onFailure {
                 _uiEvent.emit(AlarmsUiEvent.ShowSnackBar(context.getString(R.string.failed_to_update_status)))
             }
         }
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-class AlarmsViewModelFactory(
-    private val alertsRepository: AlertsRepo
-) : ViewModelProvider.Factory{
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AlarmsViewModel(alertsRepository) as T
     }
 }

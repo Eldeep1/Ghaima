@@ -1,8 +1,6 @@
 package com.depogramming.ghaima
 
-import android.app.Application
 import android.os.Bundle
-import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,13 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
@@ -30,44 +25,30 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.depogramming.ghaima.data.alerts.datasource.local.AlertsLocalDataSource
-import com.depogramming.ghaima.data.alerts.repository.AlertsRepositoryImpl
-import com.depogramming.ghaima.data.db.AppDatabase
-import com.depogramming.ghaima.data.network.Network
-import com.depogramming.ghaima.data.usersettings.UserSettingsRepoImp
-import com.depogramming.ghaima.data.usersettings.datasource.local.UserSettingsLocalDataSource
-import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
-import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
-import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSource
 import com.depogramming.ghaima.presentation.alarms.view.AlarmsScreenUI
 import com.depogramming.ghaima.presentation.alarms.viewmodel.AlarmsViewModel
-import com.depogramming.ghaima.presentation.alarms.viewmodel.AlarmsViewModelFactory
 import com.depogramming.ghaima.worker.BackgroundScheduler
 import com.depogramming.ghaima.presentation.home.view.HomeScreenUI
 import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModel
-import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
-import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModelFactory
 import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view.LocationScreenUI
 import com.depogramming.ghaima.presentation.mapselection.view.MapSelectionScreenUI
-import com.depogramming.ghaima.presentation.mapselection.viewmodel.CurrentMapSelectionViewModelFactory
-import com.depogramming.ghaima.presentation.mapselection.viewmodel.FavouriteMapSelectionViewModelFactory
+import com.depogramming.ghaima.presentation.mapselection.viewmodel.CurrentLocationMapSelection
+import com.depogramming.ghaima.presentation.mapselection.viewmodel.FavouriteLocationMapSelection
 import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModel
 import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.savedlocations.view.SavedLocationsUI
 import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocationsViewModel
-import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocationsViewModelFactory
 import com.depogramming.ghaima.presentation.settings.view.SettingsUI
 import com.depogramming.ghaima.presentation.settings.viewmodel.SettingsViewModel
 import com.depogramming.ghaima.presentation.splash.view.SplashScreenUI
 import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModel
-import com.depogramming.ghaima.presentation.splash.viewModel.SplashScreenViewModelFactory
 import com.depogramming.ghaima.presentation.utils.MyBottomNavigationBar
-import com.depogramming.ghaima.presentation.utils.location.LocationHelper
 import com.depogramming.ghaima.ui.theme.GhaimaTheme
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,23 +69,13 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun GhaimaApp(navController: NavHostController) {
-    val settingsDao = AppDatabase.getInstance(LocalContext.current).userSettingsDao()
-    val settingsDataSource = UserSettingsLocalDataSource(settingsDao)
-    val userSettingsRepo = UserSettingsRepoImp(settingsDataSource)
-
-
-    val weatherForeCastService= Network.weatherService
-    val weatherRemoteDataSource= WeatherRemoteDataSource(weatherForeCastService)
-    val weatherLocalDataSource= WeatherLocalDataSource(AppDatabase.getInstance(LocalContext.current).weatherForecastDao(),AppDatabase.getInstance(LocalContext.current).favouritesDao())
-    val weatherRepository = WeatherRepositoryImpl(weatherRemoteDataSource,weatherLocalDataSource)
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val showBottomBar = currentDestination?.hierarchy?.any { destination ->
-        destination.hasRoute(MainScreens.Home::class) ||
-                destination.hasRoute(MainScreens.Alarms::class) ||
-                destination.hasRoute(MainScreens.SavedLocations::class) ||
-                destination.hasRoute(MainScreens.Settings::class)
+        destination.hasRoute(MainScreens.Home::class) || destination.hasRoute(MainScreens.Alarms::class) || destination.hasRoute(
+            MainScreens.SavedLocations::class
+        ) || destination.hasRoute(MainScreens.Settings::class)
     } == true
 
     Box(
@@ -121,26 +92,18 @@ fun GhaimaApp(navController: NavHostController) {
             ),
     ) {
         Scaffold(
-            containerColor = Color.Transparent,
-            bottomBar = {
+            containerColor = Color.Transparent, bottomBar = {
                 if (showBottomBar) {
                     MyBottomNavigationBar(navController, currentDestination)
                 }
-            }
-        ) { innerPadding ->
+            }) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = SplashScreen,
             ) {
 
                 composable<SplashScreen> {
-                    val parentEntry = remember(it) {
-                        navController.getBackStackEntry<SplashScreen>()
-                    }
-                    val viewModel: SplashScreenViewModel = viewModel(
-                        viewModelStoreOwner = parentEntry,
-                        factory = SplashScreenViewModelFactory(userSettingsRepo)
-                    )
+                    val viewModel = koinViewModel<SplashScreenViewModel>()
                     SplashScreenUI(
                         modifier = Modifier.padding(innerPadding),
                         onHomeScreen = {
@@ -160,43 +123,24 @@ fun GhaimaApp(navController: NavHostController) {
                         WelcomeScreenUI(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(innerPadding),
-                            navController
+                                .padding(innerPadding), navController
                         )
                     }
                     composable<OnboardingScreens.LanguageScreen> {
 
-                        val parentEntry = remember(it) {
-                            navController.getBackStackEntry<OnboardingGraph>()
-                        }
-
-                        val sharedViewModel: OnboardingViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry,
-                            factory = OnboardingViewModelFactory(
-                                userSettingsRepo,
-                                LocationHelper(LocalActivity.current?.application ?: Application())
-                            )
-                        )
+                        val sharedViewModel: OnboardingViewModel =
+                            koinViewModel<OnboardingViewModel>()
                         LanguageScreenUI(
-                            Modifier.padding(innerPadding),
-                            onNextButtonClick = {
+                            Modifier.padding(innerPadding), onNextButtonClick = {
                                 navController.navigate(OnboardingScreens.LocationScreen)
-                            },
-                            viewModel = sharedViewModel
+                            }, viewModel = sharedViewModel
                         )
                     }
                     composable<OnboardingScreens.LocationScreen> {
-                        val parentEntry = remember(it) {
-                            navController.getBackStackEntry<OnboardingGraph>()
-                        }
 
-                        val sharedViewModel: OnboardingViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry,
-                            factory = OnboardingViewModelFactory(
-                                userSettingsRepo,
-                                LocationHelper(LocalActivity.current?.application ?: Application())
-                            )
-                        )
+
+                        val sharedViewModel: OnboardingViewModel =
+                            koinViewModel<OnboardingViewModel>()
                         LocationScreenUI(
                             Modifier.padding(innerPadding),
                             sharedViewModel,
@@ -211,17 +155,9 @@ fun GhaimaApp(navController: NavHostController) {
                         )
                     }
                     composable<OnboardingScreens.UnitsScreen> {
-                        val parentEntry = remember(it) {
-                            navController.getBackStackEntry<OnboardingGraph>()
-                        }
 
-                        val sharedViewModel: OnboardingViewModel = viewModel(
-                            viewModelStoreOwner = parentEntry,
-                            factory = OnboardingViewModelFactory(
-                                userSettingsRepo,
-                                LocationHelper(LocalActivity.current?.application ?: Application())
-                            )
-                        )
+                        val sharedViewModel: OnboardingViewModel =
+                            koinViewModel<OnboardingViewModel>()
                         UnitsScreenUI(viewModel = sharedViewModel) {
                             navController.navigate(MainScreens.Home) {
                                 popUpTo<OnboardingGraph> {
@@ -232,34 +168,14 @@ fun GhaimaApp(navController: NavHostController) {
                         }
                     }
                 }
-                composable<MapSelectionScreen> {backStackEntry ->
+                composable<MapSelectionScreen> { backStackEntry ->
 
                     val routeData = backStackEntry.toRoute<MapSelectionScreen>()
                     val isFavourites = routeData.isFavourite
-
-                    val parentEntry = remember(backStackEntry) {
-                        navController.getBackStackEntry<MapSelectionScreen>()
-                    }
-                    var mapSelectionViewModel: MapSelectionViewModel
-                    if (isFavourites) {
-                        mapSelectionViewModel= viewModel(
-                            viewModelStoreOwner = parentEntry,
-                            factory = FavouriteMapSelectionViewModelFactory(
-                                userSettingsRepo,
-                                weatherRepository,
-                                LocationHelper(LocalActivity.current?.application ?: Application())
-                            )
-                        )
-                    }
-                    else{
-                        mapSelectionViewModel= viewModel(
-                            viewModelStoreOwner = parentEntry,
-                            factory = CurrentMapSelectionViewModelFactory(
-                                userSettingsRepo,
-                                weatherRepository,
-                                LocationHelper(LocalActivity.current?.application ?: Application())
-                            )
-                        )
+                    val mapSelectionViewModel: MapSelectionViewModel = if (isFavourites) {
+                        koinViewModel<FavouriteLocationMapSelection>()
+                    } else {
+                        koinViewModel<CurrentLocationMapSelection>()
                     }
                     MapSelectionScreenUI(
                         modifier = Modifier.padding(innerPadding),
@@ -273,56 +189,37 @@ fun GhaimaApp(navController: NavHostController) {
                     startDestination = MainScreens.Home
                 ) {
                     composable<MainScreens.Home> {
-                        val homeScreenViewModel: HomeScreenViewModel = viewModel(
-                            factory = HomeScreenViewModelFactory(
-                                weatherRepository,
-                                userSettingsRepo,
-                            )
-                        )
-                        HomeScreenUI(modifier = Modifier.padding(innerPadding),homeScreenViewModel)
+                        val homeScreenViewModel: HomeScreenViewModel =
+                            koinViewModel<HomeScreenViewModel>()
+                        HomeScreenUI(modifier = Modifier.padding(innerPadding), homeScreenViewModel)
                     }
                     composable<MainScreens.SavedLocations> {
-                        val savedLocationsViewModel: SavedLocationsViewModel = viewModel(
-                            factory = SavedLocationsViewModelFactory(
-                                weatherRepository,
-                                userSettingsRepo,
-                                locationHelper = LocationHelper(LocalActivity.current?.application ?: Application())
-                            )
-                        )
+                        val savedLocationsViewModel: SavedLocationsViewModel =
+                            koinViewModel<SavedLocationsViewModel>()
                         SavedLocationsUI(
                             modifier = Modifier.padding(innerPadding),
-                            viewModel=savedLocationsViewModel,
+                            viewModel = savedLocationsViewModel,
                             onMapClick = {
                                 navController.navigate(MapSelectionScreen(isFavourite = true))
-                            }
-                            )
+                            })
                     }
                     composable<MainScreens.Alarms> {
-                        val alertsLocalDataSource= AlertsLocalDataSource(AppDatabase.getInstance(LocalContext.current).alertsDao())
-                        val alertsRepository= AlertsRepositoryImpl(alertsLocalDataSource)
-                        val alarmsViewModel: AlarmsViewModel = viewModel(
-                            factory = AlarmsViewModelFactory(
-                                alertsRepository = alertsRepository
-                            )
+                        val alarmsViewModel: AlarmsViewModel = koinViewModel<AlarmsViewModel>()
+                        AlarmsScreenUI(
+                            modifier = Modifier.padding(innerPadding), viewModel = alarmsViewModel
                         )
-                        AlarmsScreenUI(modifier = Modifier.padding(innerPadding), viewModel = alarmsViewModel)
                     }
                     composable<MainScreens.Settings> {
-                        val settingsScreenViewModel: SettingsViewModel = viewModel(
-                            factory = SettingsViewModel.SettingsViewModelFactory(
-                                userSettingsRepo,
-                                locationHelper = LocationHelper(LocalActivity.current?.application ?: Application())
-                                )
-                        )
-                        SettingsUI(modifier = Modifier.padding(innerPadding),settingsScreenViewModel,onMapClick = {
-                            navController.navigate(MapSelectionScreen)
-                        })
+                        val settingsScreenViewModel: SettingsViewModel =
+                            koinViewModel<SettingsViewModel>()
+                        SettingsUI(
+                            modifier = Modifier.padding(innerPadding),
+                            settingsScreenViewModel,
+                            onMapClick = {
+                                navController.navigate(MapSelectionScreen)
+                            })
                     }
-
-
                 }
-
-
             }
         }
     }

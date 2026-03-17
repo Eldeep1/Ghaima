@@ -144,13 +144,3 @@ class OnboardingViewModel(
         }
     }
 }
-
-@Suppress("UNCHECKED_CAST")
-class OnboardingViewModelFactory(
-    private val repository: UserSettingsRepo,
-    private val locationHelper: LocationHelper
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return OnboardingViewModel(repository, locationHelper) as T
-    }
-}

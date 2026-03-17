@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.depogramming.ghaima.data.weather.datasource.remote.dto.CountriesListDTO
 import com.depogramming.ghaima.data.weather.model.LocationModel
 import com.depogramming.ghaima.data.usersettings.UserSettingsRepo
-import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
+import com.depogramming.ghaima.data.weather.WeatherRepository
 import com.depogramming.ghaima.presentation.utils.location.LocationHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 abstract class MapSelectionViewModel(
     val userSettingsRepository: UserSettingsRepo,
-    val weatherRepository: WeatherRepositoryImpl,
+    val weatherRepository: WeatherRepository,
     val locationHelper: LocationHelper
 ) : ViewModel() {
 

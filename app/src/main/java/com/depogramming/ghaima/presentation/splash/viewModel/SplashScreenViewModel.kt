@@ -33,10 +33,3 @@ class SplashScreenViewModel(
         }
     }
 }
-
-@Suppress("UNCHECKED_CAST")
-class SplashScreenViewModelFactory( private val repository: UserSettingsRepo) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SplashScreenViewModel(repository) as T
-    }
-}

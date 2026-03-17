@@ -5,22 +5,16 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.depogramming.ghaima.data.alerts.model.NotificationAlert
 import com.depogramming.ghaima.data.alerts.repository.AlertsRepo
-import com.depogramming.ghaima.data.weather.WeatherRepositoryImpl
 import java.util.Calendar
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.core.app.NotificationCompat
-import com.depogramming.ghaima.data.alerts.datasource.local.AlertsLocalDataSource
-import com.depogramming.ghaima.data.alerts.repository.AlertsRepositoryImpl
-import com.depogramming.ghaima.data.db.AppDatabase
 import android.app.PendingIntent
 import android.content.Intent
 import com.depogramming.ghaima.MainActivity
 import com.depogramming.ghaima.R
-import com.depogramming.ghaima.data.network.Network
-import com.depogramming.ghaima.data.weather.datasource.local.WeatherLocalDataSource
+import com.depogramming.ghaima.data.weather.WeatherRepository
 import com.depogramming.ghaima.data.weather.datasource.local.entity.WeatherForecastEntity
-import com.depogramming.ghaima.data.weather.datasource.remote.WeatherRemoteDataSource
 import com.depogramming.ghaima.data.weather.mapper.toEntity
 import kotlin.jvm.java
 import kotlin.math.abs
@@ -28,16 +22,10 @@ import kotlin.math.abs
 class WeatherAlertWorker(
     private val context: Context,
     workerParams: WorkerParameters,
+    val alertsRepository: AlertsRepo,
+    val weatherRepo: WeatherRepository
 ) : CoroutineWorker(context, workerParams) {
 
-    val alertsRepository: AlertsRepo =
-        AlertsRepositoryImpl(AlertsLocalDataSource(AppDatabase.getInstance(context).alertsDao()))
-
-    val weatherRepo = WeatherRepositoryImpl(
-        weatherRemoteDataSource = WeatherRemoteDataSource(Network.weatherService),
-        weatherLocalDataSource = WeatherLocalDataSource(AppDatabase.getInstance(context).weatherForecastDao(),
-            AppDatabase.getInstance(context).favouritesDao()),
-        )
 
     override suspend fun doWork(): Result {
         return try {
