@@ -1,44 +1,45 @@
-package com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view
+package com.depogramming.ghaima.presentation.onboarding.views.locationscreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.depogramming.ghaima.presentation.onboarding.views.utils.ExpandingPageIndicator
-import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
+import com.depogramming.ghaima.presentation.onboarding.views.utils.ExpandingPageIndicator
+import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
 import com.depogramming.ghaima.presentation.utils.location.LocationPermissionHandler
-
 
 @Composable
 fun LocationScreenUI(
@@ -70,7 +71,10 @@ fun LocationScreenUI(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(modifier=Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Spacer(Modifier.height(96.dp))
             Text(
                 text = stringResource(R.string.set_your_location),
@@ -108,7 +112,7 @@ fun LocationScreenUI(
             1
         )
         Spacer(Modifier.height(32.dp))
-        NextButton(onClick={
+        NextButton(onClick = {
 
             //TODO: do some shits on the view model then decide to navigate or not
             onNextButtonClick()
@@ -121,9 +125,9 @@ fun LocationScreenUI(
 fun SelectedLocationColumn(viewModel: OnboardingViewModel){
     val selectedCountry=viewModel.place.collectAsStateWithLifecycle()
     if(!selectedCountry.value.isEmpty()){
-        Column (
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             Spacer(Modifier.height(24.dp))
             Text(
                 text = stringResource(R.string.selected_location),
@@ -155,7 +159,11 @@ fun LocationSelectionCard(
             .fillMaxWidth()
             .height(196.dp)
             .clip(RoundedCornerShape(24.dp))
-            .border(2.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(24.dp))
+            .border(
+                2.dp,
+                Color.White.copy(alpha = 0.3f),
+                androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
+            )
             .clickable { onClick() }
     ) {
 

@@ -33,12 +33,12 @@ import com.depogramming.ghaima.presentation.home.viewmodel.HomeScreenViewModel
 import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.depogramming.ghaima.presentation.onboarding.views.languageScreen.LanguageScreenUI
-import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.view.LocationScreenUI
+import com.depogramming.ghaima.presentation.onboarding.views.locationscreen.LocationScreenUI
 import com.depogramming.ghaima.presentation.mapselection.view.MapSelectionScreenUI
 import com.depogramming.ghaima.presentation.mapselection.viewmodel.CurrentLocationMapSelection
 import com.depogramming.ghaima.presentation.mapselection.viewmodel.FavouriteLocationMapSelection
 import com.depogramming.ghaima.presentation.mapselection.viewmodel.MapSelectionViewModel
-import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view.UnitsScreenUI
+import com.depogramming.ghaima.presentation.onboarding.views.unitscreen.UnitsScreenUI
 import com.depogramming.ghaima.presentation.onboarding.views.welcomescreen.WelcomeScreenUI
 import com.depogramming.ghaima.presentation.savedlocations.view.SavedLocationsUI
 import com.depogramming.ghaima.presentation.savedlocations.viewmodel.SavedLocationsViewModel

@@ -1,4 +1,4 @@
-package com.depogramming.ghaima.presentation.onboarding.views.unitscreen.view
+package com.depogramming.ghaima.presentation.onboarding.views.unitscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

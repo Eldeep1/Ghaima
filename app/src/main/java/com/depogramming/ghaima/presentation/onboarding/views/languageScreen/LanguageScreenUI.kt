@@ -42,11 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.depogramming.ghaima.data.weather.model.LanguageModel
-import com.depogramming.ghaima.presentation.onboarding.views.utils.OnboardingScreens
 import com.depogramming.ghaima.presentation.onboarding.viewmodel.OnboardingViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import com.depogramming.ghaima.R
 import com.depogramming.ghaima.presentation.onboarding.views.utils.ExpandingPageIndicator
 import com.depogramming.ghaima.presentation.onboarding.views.utils.NextButton
