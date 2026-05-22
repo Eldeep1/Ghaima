@@ -37,7 +37,7 @@ The project follows the **MVVM (Model-View-ViewModel)** architectural pattern an
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/Ghaima.git
+   git clone https://github.com/Eldeep1/Ghaima.git
    ```
 
 2. **API Keys:**
